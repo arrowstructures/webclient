@@ -41,7 +41,11 @@ export default function AboutPage() {
             <div className="space-y-4">
               <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl">About Arrow Structures</h1>
               <p className="text-xl text-muted-foreground">
-              Arrow Structures is a design-led Structural and Civil Engineering Consultancy based in India, established in 2017. The company is driven by a passion for innovation, creativity, and practical engineering solutions. Arrow Structures specializes in delivering superior and cost-effective structural designs across all stages of building construction. From initial concept and feasibility studies to complete design development, we ensure each project is meticulously planned and executed.
+                Arrow Structures is a design-led Structural and Civil Engineering Consultancy based in India, established in 2017. 
+                The company is driven by a passion for innovation, creativity, and practical engineering solutions. 
+                Arrow Structures specializes in delivering superior and cost-effective structural designs across all stages of 
+                building construction. From initial concept and feasibility studies to complete design development, we ensure each 
+                project is meticulously planned and executed.
               </p>
             </div>
             <div className="relative aspect-video overflow-hidden rounded-lg">
@@ -85,7 +89,20 @@ export default function AboutPage() {
         </div>
       </section>
 
+      <section className="py-12 md:py-24">
+        <div className="container">
+          <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">Meet Our Team</h2>
+          <div className="mt-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
+            {team.map((member) => (
+              <div key={member.name} className="flex flex-col items-center space-y-2 text-center">
+                <Image src={member.image} alt={member.name} width={150} height={150} className="rounded-full" />
+                <div className="text-xl font-bold">{member.name}</div>
+                <div className="text-sm text-muted-foreground">{member.role}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
     </>
   )
 }
-

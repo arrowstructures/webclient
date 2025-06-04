@@ -1,14 +1,20 @@
 import "@/styles/globals.css"
+
+import type React from "react"
+
 import { Inter } from "next/font/google"
-import { SiteHeader } from "@/components/site-header"
-import { SiteFooter } from "@/components/site-footer"
-import type React from "react" 
+
+import { SonnerProvider } from "@/components/sonner-provider"
+import { StorageInitializer } from "@/components/storage-initializer"
+import { SupabaseAuthProvider } from "@/providers/supabase-auth-provider"
+import MainLayout from "@/components/layouts/main-layout"
 
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata = {
-  title: "Arrow Structures - Modern Architectural Solutions",
-  description: "Innovative and sustainable architectural solutions for modern living spaces",
+  title: "Arrow Structures - Structural Solutions",
+  description: "Innovative and sustainable structural solutions for modern construction projects",
+  generator: "v0.dev",
 }
 
 export default function RootLayout({
@@ -19,13 +25,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <div className="relative flex min-h-screen flex-col">
-          <SiteHeader />
-          <main className="flex-1">{children}</main>
-          <SiteFooter />
-        </div>
+        <SupabaseAuthProvider>
+          <StorageInitializer />
+          <MainLayout>{children}</MainLayout>
+          <SonnerProvider />
+        </SupabaseAuthProvider>
       </body>
     </html>
   )
 }
-

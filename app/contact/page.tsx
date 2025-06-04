@@ -41,7 +41,7 @@ export default function ContactPage() {
             <div className="space-y-4">
               <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl">Contact Us</h1>
               <p className="text-xl text-muted-foreground">
-                Get in touch with us for any inquiries about our architectural services.
+                Get in touch with us for any inquiries about our structural engineering services.
               </p>
             </div>
             <div className="grid gap-6">
@@ -50,7 +50,7 @@ export default function ContactPage() {
                 <div>
                   <h3 className="font-semibold">Address</h3>
                   <p className="text-sm text-muted-foreground">
-                  5, Guru Govind Singh Road, R.S Puram, Coimbatore – 641002, Tamil Nadu, India
+                    5, Guru Govind Singh Road, R.S Puram, Coimbatore – 641002, Tamil Nadu, India
                   </p>
                 </div>
               </div>
@@ -65,7 +65,7 @@ export default function ContactPage() {
                 <Mail className="h-6 w-6 text-primary" />
                 <div>
                   <h3 className="font-semibold">Email</h3>
-                  <p className="text-sm text-muted-foreground">info@arrowstructures.com</p>
+                  <p className="text-sm text-muted-foreground">contact@arrowstructures.com</p>
                 </div>
               </div>
             </div>
@@ -130,7 +130,27 @@ export default function ContactPage() {
                     </FormItem>
                   )}
                 />
-                <Button type="submit">Send Message</Button>
+                <Button
+  type="submit"
+  onClick={() => {
+    const subject = encodeURIComponent("Customer Query from Contact Form");
+
+    const body = encodeURIComponent(
+      `Dear Arrow Structures Team,\n\n` +
+      `You have received a new inquiry:\n\n` +
+      `Name: ${name}\n` +
+      `Email: ${Mail}\n` +
+      `Phone: ${Phone}\n\n` +
+      `Message:\n${onmessage}\n\n` +
+      `Regards,\nArrow Structures Contact Form`
+    );
+
+    window.location.href = `mailto:arrowstructures@gmail.com?subject=${subject}&body=${body}`;
+  }}
+>
+  Send Message
+</Button>
+
               </form>
             </Form>
             <div className="relative aspect-square md:aspect-auto">
@@ -151,4 +171,3 @@ export default function ContactPage() {
     </>
   )
 }
-

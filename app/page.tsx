@@ -1,71 +1,53 @@
-"use client"; 
+"use client";
 
-import Image from "next/image";
-import Link from "next/link";
-import Marquee from 'react-fast-marquee';
-import { Button } from "@/components/ui/button";
-import { ArrowRight, Users2, Building2, Leaf, Settings2 } from "lucide-react";
+import Image from "next/image"
+import Link from "next/link"
+import { ArrowRight, Building2, Users2, Award, Lightbulb } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import MainLayout from "@/components/layouts/main-layout"
+import { HeroSlider } from "@/components/hero-slider"
+import { useEffect, useState } from "react"
+import { supabase } from "@/lib/supabase"
 
-
+type Project = {
+  id: string
+  project_name: string
+  description: string
+  image: string
+}
 
 export default function HomePage() {
-  const clientLogos = [
-    "/cust1.jpg",
-    "/cust2.jpg",
-    "/cust3.jpg",
-    "/cust4.png",
-    "/cust5.jpg",
-    "/cust6.jpg",
-    "/cust7.jpg",
-  ];
+  const [projects, setProjects] = useState<Project[]>([])
+  const [loading, setLoading] = useState(true)
 
-  const projects = [
-    {
-      id: "01",
-      title: "KKD Nagar Bus Stand",
-      category: "Transportation",
-      image: "/proj 1.jpg",
-      description: "Modern bus terminus with sustainable design features",
-    },
-    {
-      id: "02",
-      title: "Mandaveli West Bus Depot",
-      category: "Mixed-Use",
-      image: "/proj 2.jpg",
-      description: "Integrated commercial complex and transport hub",
-    },
-    {
-      id: "03",
-      title: "Anna Nagar West Bus Depot",
-      category: "Transit-Oriented",
-      image: "/proj 3.jpg",
-      description: "Multi-modal transit station with retail spaces",
-    },
+    useEffect(() => {
+    const fetchProjects = async () => {
+      const { data, error } = await supabase.from("projects").select("*")
+      .order("created_at", { ascending: false })
+      .limit(3)
+      if (error) {
+        console.error("Error fetching projects:", error.message)
+      } else {
+        setProjects(data as Project[])
+      }
+      setLoading(false)
+    }
+    fetchProjects()
+  }, [])
+
+  console.log("Projects:", projects)
+
+
+  const stats = [
+    { icon: Building2, value: "500+", label: "Projects Completed" },
+    { icon: Users2, value: "50+", label: "Team Members" },
+    { icon: Award, value: "25+", label: "Awards Won" },
+    { icon: Lightbulb, value: "15+", label: "Years Experience" },
   ]
 
   return (
-    <>
-      <section className="relative h-[80vh] overflow-hidden">
-        <Image
-          src="/home.jpg"
-          alt="Hero Image"
-          fill
-          className="object-cover"
-          priority
-        />
-        <div className="absolute inset-0 bg-black/50" />
-        <div className="container relative z-10 flex h-full flex-col justify-center text-white">
-          <h1 className="text-5xl font-bold tracking-tighter sm:text-6xl xl:text-7xl/none">ARROW STRUCTURES</h1>
-          <p className="mt-4 max-w-[600px] text-base sm:text-xl">
-            Innovative architectural solutions for modern transportation infrastructure and urban development.
-          </p>
-          <Button asChild className="mt-8 w-fit" size="lg">
-            <Link href="/projects">
-              View Projects <ArrowRight className="ml-2 h-4 w-4" />
-            </Link>
-          </Button>
-        </div>
-      </section>
+<div>
+      <HeroSlider />
 
       <section className="py-12 md:py-24">
         <div className="container">
@@ -74,20 +56,19 @@ export default function HomePage() {
             {projects.map((project) => (
               <Link
                 key={project.id}
-                href={`/projects/${project.id}`}
+                href={`/portfolio/${project.id}`}
                 className="group relative overflow-hidden rounded-lg"
               >
-                <Image
-                  src={project.image || "/placeholder.svg"}
-                  alt={project.title}
-                  width={400}
-                  height={500}
-                  className="aspect-[4/3] object-cover transition-transform duration-300 group-hover:scale-105"
-                />
+               <img
+              src={`${project.image}`}
+              width={500}
+              height={500}
+              className="aspect-[4/3] object-cover transition-transform duration-300 group-hover:scale-105"
+              />
+
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                 <div className="absolute bottom-0 p-4 text-white">
-                  <div className="text-sm font-medium">{project.id}</div>
-                  <h3 className="text-lg font-bold">{project.title}</h3>
+                  <h3 className="text-lg font-bold">{project.project_name}</h3>
                   <p className="text-sm opacity-80">{project.description}</p>
                 </div>
               </Link>
@@ -100,11 +81,18 @@ export default function HomePage() {
         <div className="container">
           <div className="grid gap-12 md:grid-cols-2">
             <div className="space-y-4">
-              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">About Us</h2>
+              <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">About Arrow Structures</h2>
               <p className="text-muted-foreground">
-                Arrow Structures specializes in designing and developing modern transportation infrastructure and urban
-                spaces. With years of experience in creating sustainable and efficient transit solutions, we transform
-                cities through innovative architectural design.
+                Founded in 2017, Arrow Structures has steadily grown into one of the leading Structural Consultancy and
+                Civil Construction firms in the region. Spearheaded by Dr. Prabu Dev, M.E., Ph.D., our Principal
+                Structural Engineer, the company was built on a foundation of technical excellence, quality commitment,
+                and client-centric values.
+              </p>
+              <p className="text-muted-foreground">
+                At Arrow Structures, we believe that every structure tells a story — and we make sure yours is built
+                with strength, elegance, and trust. From concept to completion, we ensure that all our projects meet
+                industry standards while maintaining the perfect balance between quality, cost-efficiency,
+                serviceability, and sustainability.
               </p>
               <Button asChild>
                 <Link href="/about">
@@ -112,33 +100,14 @@ export default function HomePage() {
                 </Link>
               </Button>
             </div>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-2">
-                <Users2 className="h-8 w-8 text-primary" />
-                <h3 className="font-bold">Expert Team</h3>
-                <p className="text-sm text-muted-foreground">
-                  Experienced professionals dedicated to excellence in design and execution.
-                </p>
-              </div>
-              <div className="space-y-2">
-                <Building2 className="h-8 w-8 text-primary" />
-                <h3 className="font-bold">Modern Design</h3>
-                <p className="text-sm text-muted-foreground">
-                  Contemporary architectural solutions that prioritize functionality.
-                </p>
-              </div>
-              <div className="space-y-2">
-                <Leaf className="h-8 w-8 text-primary" />
-                <h3 className="font-bold">Sustainability</h3>
-                <p className="text-sm text-muted-foreground">
-                  Eco-friendly approaches to urban infrastructure development.
-                </p>
-              </div>
-              <div className="space-y-2">
-                <Settings2 className="h-8 w-8 text-primary" />
-                <h3 className="font-bold">Innovation</h3>
-                <p className="text-sm text-muted-foreground">Cutting-edge solutions for modern transit requirements.</p>
-              </div>
+            <div className="grid gap-8 sm:grid-cols-2">
+              {stats.map((stat) => (
+                <div key={stat.label} className="flex flex-col items-center space-y-2 text-center">
+                  <stat.icon className="h-12 w-12 text-primary" />
+                  <div className="text-3xl font-bold">{stat.value}</div>
+                  <div className="text-sm text-muted-foreground">{stat.label}</div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -148,27 +117,19 @@ export default function HomePage() {
         <div className="container">
           <div className="mx-auto max-w-[900px] text-center">
             <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl">Our Services</h2>
-            <p className="mt-4 text-muted-foreground">
-              Comprehensive architectural and infrastructure development services
-            </p>
+            <p className="mt-4 text-muted-foreground">Comprehensive structural engineering and construction services</p>
           </div>
-          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-2">
             <div className="rounded-lg border bg-card p-6">
-              <h3 className="font-bold">Transport Infrastructure</h3>
+              <h3 className="font-bold">Residential Projects</h3>
               <p className="mt-2 text-sm text-muted-foreground">
-                Design and development of bus terminals, depots, and transit stations.
-              </p>
-            </div>
-            <div className="rounded-lg border bg-card p-6">
-              <h3 className="font-bold">Urban Planning</h3>
-              <p className="mt-2 text-sm text-muted-foreground">
-                Integrated solutions for urban mobility and space utilization.
+                Custom residential design and construction solutions for modern living.
               </p>
             </div>
             <div className="rounded-lg border bg-card p-6">
               <h3 className="font-bold">Commercial Development</h3>
               <p className="mt-2 text-sm text-muted-foreground">
-                Mixed-use developments integrated with transport infrastructure.
+                Commercial buildings and infrastructure development projects.
               </p>
             </div>
           </div>
@@ -182,35 +143,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="mt-3">
-      <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl text-center">Our Esteemed Customers</h2>
-      <Marquee speed={50} className="mt-20" pauseOnHover={true} loop={0}>
-        <div className="flex items-center">
-          {/* First Set of Logos */}
-          {clientLogos.map((logo, index) => (
-            <div
-              key={`first-${index}`}
-              className="flex-shrink-0 w-32 h-32 flex items-center justify-center overflow-hidden mx-5"
-            >
-              <img src={logo} alt={`Client Logo ${index + 1}`} className="w-full h-full object-contain " />
-            </div>
-          ))}
-          {/* Add an explicit spacer between the first and duplicated sets */}
-          <div className="flex-shrink-0 w-10 h-32"></div>
-          {/* Second Set of Logos */}
-          {clientLogos.map((logo, index) => (
-            <div
-              key={`second-${index}`}
-              className="flex-shrink-0 w-32 h-32  flex items-center justify-center overflow-hidden mx-5"
-            >
-              <img src={logo} alt={`Client Logo ${index + 1}`} className="w-full h-full object-contain " />
-            </div>
-          ))}
-        </div>
-      </Marquee>
-    </section><br/><br/><br/>
-      
-
       <section className="border-t bg-muted py-12 md:py-24" id="contact">
         <div className="container">
           <div className="grid gap-12 md:grid-cols-2">
@@ -220,9 +152,12 @@ export default function HomePage() {
                 Interested in working with us? Contact our team to discuss your project requirements.
               </p>
               <div className="space-y-2">
-                <p className="text-sm">Email: info@arrowstructures.com</p>
+                <p className="text-sm">Email: contact@arrowstructures.com</p>
                 <p className="text-sm">Phone: +91 88705 94827</p>
-                <p className="text-sm">Address: 5, Guru Govind Singh Road, R.S Puram,<br/> Coimbatore – 641002, Tamil Nadu, India.</p>
+                <p className="text-sm">
+                  Address: 5, Guru Govind Singh Road, R.S Puram,
+                  <br /> Coimbatore – 641002, Tamil Nadu, India.
+                </p>
               </div>
               <Button asChild>
                 <Link href="/contact">
@@ -244,7 +179,7 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-    </>
+      </div>
+    
   )
 }
-

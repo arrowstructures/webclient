@@ -220,8 +220,9 @@ export function HeroSlider() {
             </h1>
             <p className="mt-4 max-w-[600px] text-base sm:text-xl">{slide.description}</p>
             <Button asChild className="mt-8 w-fit" size="lg">
-              <Link href={slide.id}>view Project</Link>
-            </Button>
+  <Link href="/portfolio">View Project</Link>
+</Button>
+
           </div>
         </div>
       ))}

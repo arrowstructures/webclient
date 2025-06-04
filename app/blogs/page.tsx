@@ -201,7 +201,7 @@ export default function BlocksPage() {
       <section className="bg-muted py-12 md:py-24">
         <div className="container">
           <div className="max-w-[900px]">
-            <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl">Construction Blogs</h1>
+            <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl">Blogs</h1>
             <p className="mt-4 text-xl text-muted-foreground">
               Explore our range of high-quality construction blocks for your building projects.
             </p>

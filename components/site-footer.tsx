@@ -1,80 +1,129 @@
 import Link from "next/link"
-import { Facebook, Instagram, Linkedin, Twitter } from "lucide-react"
+import { Facebook, Instagram, Linkedin, Mail, MapPin, Phone } from "lucide-react"
 
 export function SiteFooter() {
+  const currentYear = new Date().getFullYear()
+
+  const navItems = [
+    { name: "Home", href: "/" },
+    { name: "About", href: "/about" },
+    { name: "Portfolio", href: "/portfolio" },
+    { name: "Services", href: "/services" },
+    { name: "Blocks", href: "/blocks" },
+    { name: "Newsletter", href: "/newsletter" },
+    { name: "Career", href: "/career" },
+    { name: "Contact", href: "/contact" },
+  ]
+
   return (
-    <footer className="w-full border-t bg-background">
-      <div className="container grid gap-8 py-12 md:grid-cols-2 lg:grid-cols-4">
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold">About Us</h3>
-          <p className="text-sm text-muted-foreground">
-            Arrow Structures specializes in creating innovative and sustainable architectural solutions for modern
-            living spaces.
-          </p>
-        </div>
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold">Quick Links</h3>
-          <nav className="flex flex-col space-y-2">
-            <Link href="/projects" className="text-sm hover:text-primary">
-              Our Projects
-            </Link>
-            <Link href="/services" className="text-sm hover:text-primary">
-              Services
-            </Link>
-            <Link href="/about" className="text-sm hover:text-primary">
-              About Us
-            </Link>
-            <Link href="/contact" className="text-sm hover:text-primary">
-              Contact
-            </Link>
-          </nav>
-        </div>
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold">Contact Info</h3>
-          <div className="text-sm space-y-2">
-            <p>5, Guru Govind Singh Road, R.S Puram, Coimbatore – 641002, Tamil Nadu, India</p>
-            <p>Phone: +91 88705 94827</p>
-            <p>Email: info@arrowstructures.com</p>
+    <footer className="bg-slate-900 text-slate-200">
+      <div className="container py-12 md:py-16">
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
+          {/* Company Info */}
+          <div className="space-y-4">
+            <div className="flex items-center space-x-3">
+  <img
+    src="/logo.png" // update path if needed
+    alt="Arrow Structures Logo"
+    className="h-10 w-auto"
+  />
+  <div className="flex flex-col leading-tight">
+    <span className="text-xl font-bold text-white">ARROW</span>
+    <span className="text-xl font-bold text-white">STRUCTURES</span>
+  </div>
+</div>
+
+            <p className="text-sm text-slate-400 max-w-xs">
+              Providing innovative structural engineering solutions and construction services since 2017.
+            </p>
+            <div className="flex space-x-4">
+              <Link href="https://facebook.com" className="text-slate-400 hover:text-white">
+                <Facebook className="h-5 w-5" />
+                <span className="sr-only">Facebook</span>
+              </Link>
+              <Link href="https://instagram.com" className="text-slate-400 hover:text-white">
+                <Instagram className="h-5 w-5" />
+                <span className="sr-only">Instagram</span>
+              </Link>
+              <Link href="https://linkedin.com" className="text-slate-400 hover:text-white">
+                <Linkedin className="h-5 w-5" />
+                <span className="sr-only">LinkedIn</span>
+              </Link>
+            </div>
+          </div>
+
+          {/* Quick Links */}
+          <div>
+            <h3 className="text-lg font-semibold mb-4 text-white">Quick Links</h3>
+            <ul className="space-y-2">
+              {navItems.map((item) => (
+                <li key={item.name}>
+                  <Link href={item.href} className="text-sm text-slate-400 hover:text-white">
+                    {item.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Services */}
+          <div>
+            <h3 className="text-lg font-semibold mb-4 text-white">Services</h3>
+            <ul className="space-y-2">
+              <li>
+                <Link href="/services" className="text-sm text-slate-400 hover:text-white">
+                  Residential Projects
+                </Link>
+              </li>
+              <li>
+                <Link href="/services" className="text-sm text-slate-400 hover:text-white">
+                  Commercial Development
+                </Link>
+              </li>
+              <li>
+                <Link href="/services" className="text-sm text-slate-400 hover:text-white">
+                  Structural Design
+                </Link>
+              </li>
+              <li>
+                <Link href="/services" className="text-sm text-slate-400 hover:text-white">
+                  Project Management
+                </Link>
+              </li>
+              <li>
+                <Link href="/services" className="text-sm text-slate-400 hover:text-white">
+                  Consultation
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Contact Info */}
+          <div>
+            <h3 className="text-lg font-semibold mb-4 text-white">Contact Us</h3>
+            <ul className="space-y-3">
+              <li className="flex items-start">
+                <MapPin className="h-5 w-5 text-slate-400 mr-2 mt-0.5 flex-shrink-0" />
+                <span className="text-sm text-slate-400">
+                  5, Guru Govind Singh Road, R.S Puram, Coimbatore – 641002, Tamil Nadu, India
+                </span>
+              </li>
+              <li className="flex items-center">
+                <Phone className="h-5 w-5 text-slate-400 mr-2 flex-shrink-0" />
+                <span className="text-sm text-slate-400">+91 88705 94827</span>
+              </li>
+              <li className="flex items-center">
+                <Mail className="h-5 w-5 text-slate-400 mr-2 flex-shrink-0" />
+                <span className="text-sm text-slate-400">arrowstructures@gmail.com</span>
+              </li>
+            </ul>
           </div>
         </div>
-        <div className="space-y-4">
-          <h3 className="text-lg font-semibold">Follow Us</h3>
-          <div className="flex space-x-4">
-            <Link href="#" className="hover:text-primary">
-              <Facebook className="h-5 w-5" />
-              <span className="sr-only">Facebook</span>
-            </Link>
-            <Link href="#" className="hover:text-primary">
-              <Twitter className="h-5 w-5" />
-              <span className="sr-only">Twitter</span>
-            </Link>
-            <Link href="#" className="hover:text-primary">
-              <Instagram className="h-5 w-5" />
-              <span className="sr-only">Instagram</span>
-            </Link>
-            <Link href="#" className="hover:text-primary">
-              <Linkedin className="h-5 w-5" />
-              <span className="sr-only">LinkedIn</span>
-            </Link>
-          </div>
-        </div>
-      </div>
-      <div className="border-t py-6">
-        <div className="container flex flex-col items-center justify-between gap-4 md:h-24 md:flex-row">
-          <p className="text-sm text-muted-foreground">
-            © {new Date().getFullYear()} Arrow Structures. All rights reserved.
-          </p>
-          <nav className="flex gap-4 text-sm text-muted-foreground">
-            <Link href="/privacy" className="hover:underline underline-offset-4">
-              Privacy Policy
-            </Link>
-            <Link href="/terms" className="hover:underline underline-offset-4">
-              Terms of Service
-            </Link>
-          </nav>
+
+        <div className="mt-12 pt-6 border-t border-slate-800 text-center text-sm text-slate-400">
+          <p>© {currentYear} Arrow Structures. All rights reserved.</p>
         </div>
       </div>
     </footer>
   )
 }
-

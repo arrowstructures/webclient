@@ -1,36 +1,96 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+### Prerequisites
 
-## Getting Started
+- Node.js 18+ and npm/yarn
+- Supabase account
 
-First, run the development server:
+### Installation
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+1. Clone the repository:
+   \`\`\`bash
+   git clone https://github.com/yourusername/newsletter-admin.git
+   cd newsletter-admin
+   \`\`\`
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies:
+   \`\`\`bash
+   npm install
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+   # or
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+   yarn install
+   \`\`\`
 
-## Learn More
+3. Set up environment variables:
+   Create a `.env.local` file in the root directory with the following variables:
+   \`\`\`
+   NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+   \`\`\`
 
-To learn more about Next.js, take a look at the following resources:
+4. Set up the database:
+   Run the SQL scripts in the `db/setup.sql` file in your Supabase SQL editor.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+5. Set up storage:
+   Follow the instructions in the [Storage Setup](#storage-setup) section.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+6. Start the development server:
+   \`\`\`bash
+   npm run dev
 
-## Deploy on Vercel
+   # or
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+   yarn dev
+   \`\`\`
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+7. Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+## Database Setup
+
+The application uses Supabase PostgreSQL for data storage. To set up the database:
+
+1. Go to your Supabase project dashboard
+2. Navigate to the SQL Editor
+3. Copy and paste the contents of `db/setup.sql` into the SQL Editor
+4. Run the SQL script
+
+This will create the necessary tables, indexes, and RLS policies for your application.
+
+## Storage Setup
+
+The application uses Supabase Storage for storing article thumbnails. To set up storage:
+
+1. Go to your Supabase project dashboard
+2. Navigate to the Storage section
+3. Create a new bucket named "articles"
+4. Set the bucket to public
+5. Set up the following RLS policies:
+
+### Policy 1: Allow authenticated users to upload files
+
+- Policy name: "Allow authenticated uploads"
+- Operation: INSERT
+- For: authenticated users only
+- Policy definition: `(bucket_id = 'articles')`
+
+### Policy 2: Allow users to update their own files
+
+- Policy name: "Allow users to update their own files"
+- Operation: UPDATE
+- For: authenticated users only
+- Policy definition: `(bucket_id = 'articles' AND auth.uid() = owner)`
+
+### Policy 3: Allow users to delete their own files
+
+- Policy name: "Allow users to delete their own files"
+- Operation: DELETE
+- For: authenticated users only
+- Policy definition: `(bucket_id = 'articles' AND auth.uid() = owner)`
+
+### Policy 4: Allow public access to read files
+
+- Policy name: "Allow public access to files"
+- Operation: SELECT
+- For: public access
+- Policy definition: `(bucket_id = 'articles')`
+
+Alternatively, you can run the SQL commands in `db/storage-setup.sql` in the SQL Editor.

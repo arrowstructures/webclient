@@ -45,6 +45,85 @@ export interface Database {
           user_id?: string
         }
       }
+      clients: {
+        Row: {
+          id: string
+          client_name: string
+          email: string
+          mobile_number: string
+          client_logo_url: string
+          location: string
+          company_name: string
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          client_name: string
+          email: string
+          mobile_number: string
+          client_logo_url: string
+          location: string
+          company_name: string
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          client_name?: string
+          email?: string
+          mobile_number?: string
+          client_logo_url?: string
+          location?: string
+          company_name?: string
+          created_at?: string
+        }
+      }
+      careers: {
+        Row: {
+          id: string
+          job_title: string
+          department: string
+          location: string
+          job_type: string
+          job_description: string
+          requirements: string
+          benefits: string
+          min_salary: number
+          max_salary: number
+          remote_work_available: boolean
+          publish_immediately: boolean
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          job_title: string
+          department: string
+          location: string
+          job_type: string
+          job_description: string
+          requirements: string
+          benefits: string
+          min_salary: number
+          max_salary: number
+          remote_work_available?: boolean
+          publish_immediately?: boolean
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          job_title?: string
+          department?: string
+          location?: string
+          job_type?: string
+          job_description?: string
+          requirements?: string
+          benefits?: string
+          min_salary?: number
+          max_salary?: number
+          remote_work_available?: boolean
+          publish_immediately?: boolean
+          created_at?: string
+        }
+      }
     }
     Views: {
       [_ in never]: never

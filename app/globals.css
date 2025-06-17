@@ -92,3 +92,98 @@ body {
     @apply bg-background text-foreground;
   }
 }
+
+/* Mobile-specific improvements */
+@layer utilities {
+  /* Better mobile touch targets */
+  .touch-target {
+    @apply min-h-[44px] min-w-[44px];
+  }
+
+  /* Mobile-friendly text sizes */
+  .text-mobile-xs {
+    font-size: 0.75rem;
+    line-height: 1rem;
+  }
+  .text-mobile-sm {
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+  }
+  .text-mobile-base {
+    font-size: 1rem;
+    line-height: 1.5rem;
+  }
+  .text-mobile-lg {
+    font-size: 1.125rem;
+    line-height: 1.75rem;
+  }
+  .text-mobile-xl {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+  }
+
+  /* Mobile container with proper padding */
+  .container-mobile {
+    @apply px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Mobile-friendly spacing */
+  .space-mobile-y > * + * {
+    @apply mt-4 sm:mt-6;
+  }
+
+  /* Better mobile buttons */
+  .btn-mobile {
+    @apply px-4 py-3 text-base font-medium rounded-lg transition-all duration-200;
+  }
+}
+
+/* Mobile-specific media queries */
+@media (max-width: 640px) {
+  /* Improve mobile scrolling */
+  html {
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* Better mobile form inputs */
+  input,
+  textarea,
+  select {
+    font-size: 16px; /* Prevents zoom on iOS */
+  }
+
+  /* Mobile-friendly tables */
+  table {
+    font-size: 0.875rem;
+  }
+
+  /* Better mobile images */
+  img {
+    height: auto;
+    max-width: 100%;
+  }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  /* Remove hover effects on touch devices */
+  .hover\:scale-105:hover {
+    transform: none;
+  }
+
+  /* Better touch feedback */
+  button:active,
+  [role="button"]:active,
+  a:active {
+    transform: scale(0.98);
+    transition: transform 0.1s;
+  }
+}
+
+/* Landscape mobile optimizations */
+@media (max-height: 500px) and (orientation: landscape) {
+  .mobile-landscape-compact {
+    @apply py-2;
+  }
+}

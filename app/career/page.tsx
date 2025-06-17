@@ -1,488 +1,284 @@
-// "use client"
-
-// import React, { useEffect, useState } from "react"
-// import { supabase } from "@/lib/supabase" // make sure this path matches your project
-// import { Button } from "@/components/ui/button"
-// import {
-//   Card, CardContent, CardDescription,
-//   CardFooter, CardHeader, CardTitle
-// } from "@/components/ui/card"
-// import { Input } from "@/components/ui/input"
-// import { Label } from "@/components/ui/label"
-// import { Textarea } from "@/components/ui/textarea"
-// import { toast } from "sonner"
-// import { Briefcase, MapPin, Upload } from "lucide-react"
-
-// type JobOpening = {
-//   id: string
-//   job_title: string
-//   department: string
-//   location: string
-//   job_type: string
-//   job_description: string
-//   requirements: string[]
-// }
-
-// export default function CareerPage() {
-//   const [jobOpenings, setJobOpenings] = useState<JobOpening[]>([])
-//   const [loadingJobs, setLoadingJobs] = useState(true)
-//   const [selectedFile, setSelectedFile] = useState<File | null>(null)
-//   const [formData, setFormData] = useState({
-//     name: "",
-//     email: "",
-//     phone: "",
-//     position: "",
-//     message: "",
-//   })
-//   const [isSubmitting, setIsSubmitting] = useState(false)
-
-//   useEffect(() => {
-//     async function fetchJobs() {
-//       setLoadingJobs(true)
-//       const { data, error } = await supabase
-//         .from("careers")
-//         .select("id, job_title, department, location, job_type, job_description, requirements")
-//         .eq("publish_immediately", true)
-//         .order("created_at", { ascending: false })
-
-//       if (error) {
-//         console.error("Error fetching jobs:", error)
-//         toast.error("Failed to load job openings.")
-//       } else {
-//         setJobOpenings(data || [])
-//       }
-//       setLoadingJobs(false)
-//     }
-
-//     fetchJobs()
-//   }, [])
-
-//   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-//     if (e.target.files?.[0]) {
-//       setSelectedFile(e.target.files[0])
-//     }
-//   }
-
-//   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-//     const { name, value } = e.target
-//     setFormData((prev) => ({ ...prev, [name]: value }))
-//   }
-
-//   const handleSubmit = (e: React.FormEvent) => {
-//     e.preventDefault()
-//     setIsSubmitting(true)
-
-//     // Simulate API call
-//     setTimeout(() => {
-//       toast.success("Your application has been submitted successfully!")
-//       setFormData({
-//         name: "",
-//         email: "",
-//         phone: "",
-//         position: "",
-//         message: "",
-//       })
-//       setSelectedFile(null)
-//       setIsSubmitting(false)
-//     }, 1500)
-//   }
-
-//   return (
-//     <>
-//       <section className="bg-muted py-12 md:py-24">
-//         <div className="container">
-//           <div className="max-w-[800px]">
-//             <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl">Careers</h1>
-//             <p className="mt-4 text-xl text-muted-foreground">
-//               Join our team of talented professionals and build a rewarding career in structural engineering and
-//               construction.
-//             </p>
-//           </div>
-//         </div>
-//       </section>
-
-//       <section className="py-12 md:py-24">
-//         <div className="container">
-//           <h2 className="text-3xl font-bold mb-8">Current Openings</h2>
-//           <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-//             {jobOpenings.map((job) => (
-//               <Card key={job.id} className="flex flex-col">
-//                 <CardHeader>
-//                   <CardTitle>{job.job_title}</CardTitle>
-//                   <CardDescription className="flex items-center gap-2">
-//                     <Briefcase className="h-4 w-4" />
-//                     {job.job_type}
-//                   </CardDescription>
-//                 </CardHeader>
-//                 <CardContent className="flex-1">
-//                   <div className="flex items-center text-sm text-muted-foreground mb-4">
-//                     <MapPin className="h-4 w-4 mr-1" />
-//                     {job.location}
-//                   </div>
-//                   <p className="text-sm mb-4">{job.job_description}</p>
-//                   <div className="space-y-2">
-//                     <p className="text-sm font-medium">Requirements:</p>
-//                     {/* <ul className="text-sm text-muted-foreground space-y-1">
-//                       {job.requirements.map((req, index) => (
-//                         <li key={index} className="flex items-start">
-//                           <div className="mr-2 h-1.5 w-1.5 rounded-full bg-primary mt-1.5" />
-//                           <span>{req}</span>
-//                         </li>
-//                       ))}
-//                     </ul> */}
-//                     <p className="text-sm mb-4">{job.requirements}</p>
-//                   </div>
-//                 </CardContent>
-//                 <CardFooter>
-//   <Button
-//     className="w-full"
-//     onClick={() => {
-//       const subject = encodeURIComponent(`Application for ${job.job_title}`);
-//       const body = encodeURIComponent(`Dear Hiring Team,\n\nI am interested in applying for the position of ${job.job_title}.\n\nBest regards,\n`);
-//       window.location.href = `mailto:arrowstructures@gmail.com?subject=${subject}&body=${body}`;
-//     }}
-//   >
-//     Apply Now
-//   </Button>
-// </CardFooter>
-
-//               </Card>
-//             ))}
-//           </div>
-//         </div>
-//       </section>
-
-//       <section className="border-t bg-muted py-12 md:py-24" id="apply">
-//         <div className="container">
-//           <div className="max-w-[800px] mx-auto">
-//             <h2 className="text-3xl font-bold mb-8">Apply Now</h2>
-//             <form onSubmit={handleSubmit} className="space-y-6">
-//               <div className="grid gap-6 sm:grid-cols-2">
-//                 <div className="space-y-2">
-//                   <Label htmlFor="name">Full Name</Label>
-//                   <Input id="name" name="name" value={formData.name} onChange={handleInputChange} required />
-//                 </div>
-//                 <div className="space-y-2">
-//                   <Label htmlFor="email">Email</Label>
-//                   <Input
-//                     id="email"
-//                     name="email"
-//                     type="email"
-//                     value={formData.email}
-//                     onChange={handleInputChange}
-//                     required
-//                   />
-//                 </div>
-//                 <div className="space-y-2">
-//                   <Label htmlFor="phone">Phone Number</Label>
-//                   <Input id="phone" name="phone" value={formData.phone} onChange={handleInputChange} required />
-//                 </div>
-//                 <div className="space-y-2">
-//                   <Label htmlFor="position">Position</Label>
-//                   <select
-//                     id="position"
-//                     name="position"
-//                     className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-//                     value={formData.position}
-//                     onChange={handleInputChange}
-//                     required
-//                   >
-//                     <option value="">Select a position</option>
-//                     {jobOpenings.map((job) => (
-//                       <option key={job.id} value={job.job_title}>
-//                         {job.job_title}
-//                       </option>
-//                     ))}
-//                     <option value="Other">Other</option>
-//                   </select>
-//                 </div>
-//               </div>
-
-//               <div className="space-y-2">
-//                 <Label htmlFor="resume">Resume/CV</Label>
-//                 <div className="flex items-center gap-4">
-//                   <label
-//                     htmlFor="resume"
-//                     className="flex h-10 items-center justify-center rounded-md border border-dashed border-input bg-background px-3 py-2 text-sm ring-offset-background cursor-pointer hover:bg-muted/50 flex-1"
-//                   >
-//                     <Upload className="h-4 w-4 mr-2" />
-//                     {selectedFile ? selectedFile.name : "Upload your resume"}
-//                     <input
-//                       id="resume"
-//                       type="file"
-//                       accept=".pdf,.doc,.docx"
-//                       className="sr-only"
-//                       onChange={handleFileChange}
-//                       required
-//                     />
-//                   </label>
-//                   {selectedFile && (
-//                     <Button type="button" variant="outline" size="sm" onClick={() => setSelectedFile(null)}>
-//                       Clear
-//                     </Button>
-//                   )}
-//                 </div>
-//                 <p className="text-xs text-muted-foreground">
-//                   Accepted formats: PDF, DOC, DOCX. Maximum file size: 5MB
-//                 </p>
-//               </div>
-
-//               <div className="space-y-2">
-//                 <Label htmlFor="message">Cover Letter / Additional Information</Label>
-//                 <Textarea id="message" name="message" rows={5} value={formData.message} onChange={handleInputChange} />
-//               </div>
-
-//               <Button type="submit" className="w-full" disabled={isSubmitting}>
-//                 {isSubmitting ? "Submitting..." : "Submit Application"}
-//               </Button>
-//             </form>
-//           </div>
-//         </div>
-//       </section>
-//     </>
-//   )
-// }
 "use client"
-
-import React, { useEffect, useState } from "react"
-import { supabase } from "@/lib/supabase" // make sure this path matches your project
 import { Button } from "@/components/ui/button"
-import {
-  Card, CardContent, CardDescription,
-  CardFooter, CardHeader, CardTitle
-} from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { toast } from "sonner"
-import { Briefcase, MapPin, Upload } from "lucide-react"
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Separator } from "@/components/ui/separator"
+import { Briefcase, MapPin, Home, Building2, Clock, Users, Award } from "lucide-react"
+import { StructuralBackground } from "@/components/structural-background"
+import { useEffect, useState } from "react"
+import { supabase } from "@/lib/supabase"
+import type { Database } from "@/types/database"
 
-type JobOpening = {
-  id: string
-  job_title: string
-  department: string
-  location: string
-  job_type: string
-  job_description: string
-  requirements: string[]
-}
+type JobOpening = Database["public"]["Tables"]["careers"]["Row"]
 
 export default function CareerPage() {
   const [jobOpenings, setJobOpenings] = useState<JobOpening[]>([])
-  const [loadingJobs, setLoadingJobs] = useState(true)
-  const [selectedFile, setSelectedFile] = useState<File | null>(null)
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    position: "",
-    message: "",
-  })
-  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    async function fetchJobs() {
-      setLoadingJobs(true)
-      const { data, error } = await supabase
-        .from("careers")
-        .select("id, job_title, department, location, job_type, job_description, requirements")
-        .eq("publish_immediately", true)
-        .order("created_at", { ascending: false })
+    async function fetchCareers() {
+      try {
+        const { data, error } = await supabase.from("careers").select("*").order("created_at", { ascending: false })
 
-      if (error) {
-        console.error("Error fetching jobs:", error)
-        toast.error("Failed to load job openings.")
-      } else {
-        setJobOpenings(data || [])
+        if (error) {
+          console.error("Error fetching careers:", error)
+          setError("Failed to load job openings")
+        } else {
+          setJobOpenings(data || [])
+        }
+      } catch (err) {
+        console.error("Error:", err)
+        setError("Failed to load job openings")
+      } finally {
+        setLoading(false)
       }
-      setLoadingJobs(false)
     }
 
-    fetchJobs()
+    fetchCareers()
   }, [])
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files?.[0]) {
-      setSelectedFile(e.target.files[0])
+  const parseRequirements = (requirements: string) => {
+    return requirements
+      .split(/[,;•\n]/)
+      .map((req) => req.trim())
+      .filter((req) => req.length > 0)
+      .slice(0, 3)
+  }
+
+  const parseBenefits = (benefits: string) => {
+    return benefits
+      .split(/[,;•\n]/)
+      .map((benefit) => benefit.trim())
+      .filter((benefit) => benefit.length > 0)
+      .slice(0, 4)
+  }
+
+  const getJobTypeColor = (jobType: string) => {
+    switch (jobType.toLowerCase()) {
+      case "full-time":
+        return "bg-green-100 text-green-800 border-green-200"
+      case "part-time":
+        return "bg-blue-100 text-blue-800 border-blue-200"
+      case "contract":
+        return "bg-orange-100 text-orange-800 border-orange-200"
+      case "internship":
+        return "bg-purple-100 text-purple-800 border-purple-200"
+      default:
+        return "bg-gray-100 text-gray-800 border-gray-200"
     }
   }
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
-  }
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString)
+    const now = new Date()
+    const diffTime = Math.abs(now.getTime() - date.getTime())
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsSubmitting(true)
-
-    // Simulate API call
-    setTimeout(() => {
-      toast.success("Your application has been submitted successfully!")
-      setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        position: "",
-        message: "",
-      })
-      setSelectedFile(null)
-      setIsSubmitting(false)
-    }, 1500)
+    if (diffDays === 1) return "Posted today"
+    if (diffDays <= 7) return `Posted ${diffDays} days ago`
+    return `Posted on ${date.toLocaleDateString("en-IN")}`
   }
 
   return (
-    <>
-      <section className="bg-muted py-12 md:py-24">
-        <div className="container">
-          <div className="max-w-[800px]">
-            <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl">Careers</h1>
-            <p className="mt-4 text-xl text-muted-foreground">
-              Join our team of talented professionals and build a rewarding career in structural engineering and
-              construction.
-            </p>
+    <div className="relative">
+      <StructuralBackground />
+      <div className="relative z-10">
+        <section className="py-12 bg-gradient-to-br from-gray-50 to-gray-100">
+          <div className="container max-w-7xl mx-auto px-4">
+            <div className="text-center">
+              <h1 className="text-4xl lg:text-5xl font-bold text-gray-900 leading-tight mb-4">
+                Join Our <span className="text-red-500">Team</span>
+              </h1>
+              <p className="text-gray-600 text-lg max-w-2xl mx-auto mb-6">
+                Build your career with Arrow Structures. We're looking for passionate professionals to join our growing
+                team and shape the future of structural engineering.
+              </p>
+              <div className="w-24 h-1 bg-red-500 mx-auto"></div>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section className="py-12 md:py-24">
-        <div className="container">
-          <h2 className="text-3xl font-bold mb-8">Current Openings</h2>
-
-          {loadingJobs ? (
-            <div className="flex justify-center items-center py-32">
-              <div className="w-12 h-12 border-4 border-red-500 border-t-transparent rounded-full animate-spin" />
-            </div>
-          ) : (
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {jobOpenings.map((job) => (
-                <Card key={job.id} className="flex flex-col">
-                  <CardHeader>
-                    <CardTitle>{job.job_title}</CardTitle>
-                    <CardDescription className="flex items-center gap-2">
-                      <Briefcase className="h-4 w-4" />
-                      {job.job_type}
-                    </CardDescription>
-                  </CardHeader>
-                  <CardContent className="flex-1">
-                    <div className="flex items-center text-sm text-muted-foreground mb-4">
-                      <MapPin className="h-4 w-4 mr-1" />
-                      {job.location}
-                    </div>
-                    <p className="text-sm mb-4">{job.job_description}</p>
-                    <div className="space-y-2">
-                      <p className="text-sm font-medium">Requirements:</p>
-                      <p className="text-sm mb-4">{job.requirements}</p>
-                    </div>
-                  </CardContent>
-                  <CardFooter>
-                    <Button
-                      className="w-full"
-                      onClick={() => {
-                        const subject = encodeURIComponent(`Application for ${job.job_title}`)
-                        const body = encodeURIComponent(
-                          `Dear Hiring Team,\n\nI am interested in applying for the position of ${job.job_title}.\n\nBest regards,\n`
-                        )
-                        window.location.href = `mailto:arrowstructures@gmail.com?subject=${subject}&body=${body}`
-                      }}
-                    >
-                      Apply Now
-                    </Button>
-                  </CardFooter>
-                </Card>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* <section className="border-t bg-muted py-12 md:py-24" id="apply">
-        <div className="container">
-          <div className="max-w-[800px] mx-auto">
-            <h2 className="text-3xl font-bold mb-8">Apply Now</h2>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="grid gap-6 sm:grid-cols-2">
-                <div className="space-y-2">
-                  <Label htmlFor="name">Full Name</Label>
-                  <Input id="name" name="name" value={formData.name} onChange={handleInputChange} required />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input
-                    id="email"
-                    name="email"
-                    type="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="phone">Phone Number</Label>
-                  <Input id="phone" name="phone" value={formData.phone} onChange={handleInputChange} required />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="position">Position</Label>
-                  <select
-                    id="position"
-                    name="position"
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                    value={formData.position}
-                    onChange={handleInputChange}
-                    required
-                  >
-                    <option value="">Select a position</option>
-                    {jobOpenings.map((job) => (
-                      <option key={job.id} value={job.job_title}>
-                        {job.job_title}
-                      </option>
-                    ))}
-                    <option value="Other">Other</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="resume">Resume/CV</Label>
-                <div className="flex items-center gap-4">
-                  <label
-                    htmlFor="resume"
-                    className="flex h-10 items-center justify-center rounded-md border border-dashed border-input bg-background px-3 py-2 text-sm ring-offset-background cursor-pointer hover:bg-muted/50 flex-1"
-                  >
-                    <Upload className="h-4 w-4 mr-2" />
-                    {selectedFile ? selectedFile.name : "Upload your resume"}
-                    <input
-                      id="resume"
-                      type="file"
-                      accept=".pdf,.doc,.docx"
-                      className="sr-only"
-                      onChange={handleFileChange}
-                      required
-                    />
-                  </label>
-                  {selectedFile && (
-                    <Button type="button" variant="outline" size="sm" onClick={() => setSelectedFile(null)}>
-                      Clear
-                    </Button>
-                  )}
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Accepted formats: PDF, DOC, DOCX. Maximum file size: 5MB
+        <section className="py-16">
+          <div className="container">
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <h2 className="text-3xl font-bold text-gray-900">Open Positions</h2>
+                <p className="text-gray-600 mt-2">
+                  {jobOpenings.length} {jobOpenings.length === 1 ? "position" : "positions"} available
                 </p>
               </div>
+            </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="message">Cover Letter / Additional Information</Label>
-                <Textarea id="message" name="message" rows={5} value={formData.message} onChange={handleInputChange} />
+            {loading ? (
+              <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+                {[...Array(6)].map((_, index) => (
+                  <Card key={index} className="animate-pulse border-0 shadow-lg">
+                    <CardHeader className="pb-4">
+                      <div className="h-6 bg-gray-200 rounded mb-3"></div>
+                      <div className="h-4 bg-gray-200 rounded w-2/3"></div>
+                    </CardHeader>
+                    <CardContent className="space-y-4">
+                      <div className="h-4 bg-gray-200 rounded w-1/2"></div>
+                      <div className="h-16 bg-gray-200 rounded"></div>
+                      <div className="space-y-2">
+                        <div className="h-4 bg-gray-200 rounded w-1/3"></div>
+                        <div className="h-3 bg-gray-200 rounded"></div>
+                        <div className="h-3 bg-gray-200 rounded w-3/4"></div>
+                      </div>
+                    </CardContent>
+                    <CardFooter>
+                      <div className="h-12 bg-gray-200 rounded w-full"></div>
+                    </CardFooter>
+                  </Card>
+                ))}
               </div>
+            ) : error ? (
+              <div className="text-center py-16">
+                <div className="bg-red-50 border border-red-200 rounded-lg p-8 max-w-md mx-auto">
+                  <p className="text-xl text-red-600 mb-4 font-semibold">{error}</p>
+                  <p className="text-red-500">
+                    Please try again later or contact us at{" "}
+                    <a href="mailto:arrowstructures@gmail.com" className="underline hover:no-underline">
+                      arrowstructures@gmail.com
+                    </a>
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+                {jobOpenings.length > 0 ? (
+                  jobOpenings.map((job) => (
+                    <Card
+                      key={job.id}
+                      className="group hover:shadow-xl transition-all duration-300 border-0 shadow-lg hover:-translate-y-1 bg-white"
+                    >
+                      <CardHeader className="pb-4">
+                        <div className="flex items-start justify-between mb-3">
+                          <div className="flex-1">
+                            <CardTitle className="text-xl font-bold text-gray-900 group-hover:text-red-600 transition-colors mb-2">
+                              {job.job_title}
+                            </CardTitle>
+                            <CardDescription className="flex items-center gap-2 text-gray-600">
+                              <Building2 className="h-4 w-4 text-red-500" />
+                              {job.department}
+                            </CardDescription>
+                          </div>
+                          <div className="flex flex-col gap-2">
+                            <Badge className={`text-xs font-medium ${getJobTypeColor(job.job_type)}`}>
+                              {job.job_type}
+                            </Badge>
+                            {job.remote_work_available && (
+                              <Badge variant="outline" className="text-xs border-green-200 text-green-700 bg-green-50">
+                                <Home className="h-3 w-3 mr-1" />
+                                Remote OK
+                              </Badge>
+                            )}
+                          </div>
+                        </div>
 
-              <Button type="submit" className="w-full" disabled={isSubmitting}>
-                {isSubmitting ? "Submitting..." : "Submit Application"}
-              </Button>
-            </form>
+                        <div className="flex items-center justify-between text-sm text-gray-500">
+                          <div className="flex items-center gap-1">
+                            <MapPin className="h-4 w-4 text-red-500" />
+                            {job.location}
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <Clock className="h-4 w-4" />
+                            {formatDate(job.created_at)}
+                          </div>
+                        </div>
+                      </CardHeader>
+
+                      <CardContent className="space-y-4">
+                        <p className="text-gray-700 text-sm leading-relaxed line-clamp-3">{job.job_description}</p>
+
+                        <Separator />
+
+                        <div>
+                          <div className="flex items-center gap-2 mb-3">
+                            <Users className="h-4 w-4 text-red-500" />
+                            <p className="text-sm font-semibold text-gray-900">Key Requirements</p>
+                          </div>
+                          <ul className="space-y-2">
+                            {parseRequirements(job.requirements).map((req, index) => (
+                              <li key={index} className="flex items-start gap-2 text-sm text-gray-600">
+                                <div className="w-1.5 h-1.5 bg-red-500 rounded-full mt-2 flex-shrink-0"></div>
+                                <span className="line-clamp-2">{req}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+
+                        {job.benefits && parseBenefits(job.benefits).length > 0 && (
+                          <>
+                            <Separator />
+                            <div>
+                              <div className="flex items-center gap-2 mb-3">
+                                <Award className="h-4 w-4 text-red-500" />
+                                <p className="text-sm font-semibold text-gray-900">Benefits</p>
+                              </div>
+                              <div className="flex flex-wrap gap-2">
+                                {parseBenefits(job.benefits).map((benefit, index) => (
+                                  <Badge
+                                    key={index}
+                                    variant="secondary"
+                                    className="text-xs bg-blue-50 text-blue-700 border-blue-200"
+                                  >
+                                    {benefit}
+                                  </Badge>
+                                ))}
+                              </div>
+                            </div>
+                          </>
+                        )}
+                      </CardContent>
+
+                      <CardFooter className="pt-4">
+                        <Button
+                          className="w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-3 rounded-lg transition-all duration-200 hover:shadow-lg"
+                          onClick={() => {
+                            const subject = encodeURIComponent(`Job Application - ${job.job_title}`)
+                            const body = encodeURIComponent(
+                              `Dear Hiring Manager,\n\nI am writing to express my interest in the ${job.job_title} position in the ${job.department} department at Arrow Structures.\n\nPosition Details:\n• Location: ${job.location}\n• Employment Type: ${job.job_type}\n\nI believe my skills and experience make me a strong candidate for this role. I have attached my resume for your review and would welcome the opportunity to discuss how I can contribute to your team.\n\nThank you for your consideration. I look forward to hearing from you.\n\nBest regards,\n[Your Name]\n[Your Phone Number]\n[Your Email]`,
+                            )
+                            window.location.href = `mailto:arrowstructures@gmail.com?subject=${subject}&body=${body}`
+                          }}
+                        >
+                          <Briefcase className="h-4 w-4 mr-2" />
+                          Apply for this Position
+                        </Button>
+                      </CardFooter>
+                    </Card>
+                  ))
+                ) : (
+                  <div className="col-span-full text-center py-16">
+                    <div className="bg-gray-50 border border-gray-200 rounded-lg p-8 max-w-md mx-auto">
+                      <Briefcase className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                      <p className="text-xl text-gray-600 mb-4 font-semibold">No Current Openings</p>
+                      <p className="text-gray-500 mb-6">
+                        We don't have any open positions right now, but we're always looking for talented individuals.
+                      </p>
+                      <Button
+                        variant="outline"
+                        className="border-red-500 text-red-500 hover:bg-red-50"
+                        onClick={() => {
+                          const subject = encodeURIComponent("General Application - Arrow Structures")
+                          const body = encodeURIComponent(
+                            "Dear Hiring Team,\n\nI am interested in future opportunities at Arrow Structures. Please find my resume attached.\n\nBest regards,\n",
+                          )
+                          window.location.href = `mailto:arrowstructures@gmail.com?subject=${subject}&body=${body}`
+                        }}
+                      >
+                        Send Your Resume
+                      </Button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
-        </div>
-      </section> */}
-    </>
+        </section>
+      </div>
+    </div>
   )
 }

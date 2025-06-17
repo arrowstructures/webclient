@@ -163,11 +163,7 @@ export default function NewsDetailPage() {
       {/* Article Header */}
       <section className="py-12">
         <div className="container max-w-4xl mx-auto px-4">
-          <div className="mb-6">
-            <span className="bg-red-500 text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide">
-              BREAKING NEWS
-            </span>
-          </div>
+          
 
           <h1 className="text-3xl md:text-5xl font-bold text-gray-900 leading-tight mb-6">{news.headline}</h1>
 

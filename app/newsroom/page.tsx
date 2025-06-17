@@ -140,7 +140,7 @@ export default function NewsroomPage() {
           <section className="py-6 sm:py-8">
             <div className="container max-w-7xl mx-auto px-4 sm:px-6">
               <div className="mb-4 sm:mb-6">
-                <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">Breaking News</h2>
+                <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">Latest News</h2>
                 <div className="w-12 sm:w-16 h-1 bg-red-500"></div>
               </div>
 
@@ -170,7 +170,7 @@ export default function NewsroomPage() {
                               <div className="max-w-xl sm:max-w-2xl text-white">
                                 <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
                                   <span className="bg-red-500 text-white px-2 sm:px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide">
-                                    BREAKING
+                                    NEWS
                                   </span>
                                   <span className="text-xs sm:text-sm opacity-90">
                                     {formatTimeAgo(new Date(news.created_at))}

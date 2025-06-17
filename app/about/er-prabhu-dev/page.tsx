@@ -375,30 +375,7 @@ export default function ErPrabhuDevPage() {
           </section>
 
           {/* Call to Action */}
-          <section className="py-16 md:py-24 bg-gradient-to-r from-red-600 to-red-700">
-            <div className="container">
-              <div className="max-w-4xl mx-auto text-center text-white">
-                <h2 className="text-3xl font-bold mb-4">Ready to Work with Our Expert Team?</h2>
-                <p className="text-xl mb-8 opacity-90">
-                  Connect with Er. Prabhu Dev and the Arrow Structures team for your next structural engineering
-                  project.
-                </p>
-                <div className="flex flex-wrap gap-4 justify-center">
-                  <Button asChild size="lg" className="bg-white text-red-600 hover:bg-gray-100">
-                    <Link href="/contact">Get in Touch</Link>
-                  </Button>
-                  <Button
-                    asChild
-                    size="lg"
-                    variant="outline"
-                    className="border-white text-white hover:bg-white hover:text-red-600"
-                  >
-                    <Link href="/portfolio">View Our Projects</Link>
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </section>
+         
         </div>
       </div>
     </>

@@ -1,198 +1,339 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useState, useEffect } from "react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Card, CardContent } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { ArrowRight, ChevronLeft, ChevronRight, Calendar, Clock, Search, Star } from "lucide-react"
+import { supabase } from "@/lib/supabase"
+import { formatTimeAgo } from "@/lib/utils"
 import Image from "next/image"
 import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent } from "@/components/ui/card"
-import { supabase } from "@/lib/supabase"
-import { Calendar, User, ArrowRight, BookOpen, Search } from "lucide-react"
 import { StructuralBackground } from "@/components/structural-background"
-import { Input } from "@/components/ui/input"
+
+// Blog type definition based on your database schema
+type Blog = {
+  id: string
+  title: string
+  excerpt: string
+  content: string
+  image: string
+  category: string
+  tag: string
+  featured_post: boolean
+  publish_immediately: boolean
+  created_at: string
+}
+
+type BlogClient = {
+  id: string
+  title: string
+  excerpt: string
+  content: string
+  image: string
+  category: string
+  tag: string
+  featuredPost: boolean
+  publishImmediately: boolean
+  createdAt: Date
+}
+
+// Helper function to convert snake_case to camelCase
+const snakeToCamel = (blog: Blog): BlogClient => {
+  return {
+    id: blog.id,
+    title: blog.title,
+    excerpt: blog.excerpt,
+    content: blog.content,
+    image: blog.image,
+    category: blog.category,
+    tag: blog.tag,
+    featuredPost: blog.featured_post,
+    publishImmediately: blog.publish_immediately,
+    createdAt: new Date(blog.created_at),
+  }
+}
+
+// Loading skeleton for blog cards
+function BlogCardSkeleton() {
+  return (
+    <div className="animate-pulse">
+      <div className="aspect-[16/10] bg-gray-200 rounded-lg mb-4"></div>
+      <div className="space-y-2 p-4 sm:p-6">
+        <div className="w-full h-4 bg-gray-200 rounded"></div>
+        <div className="w-3/4 h-4 bg-gray-200 rounded"></div>
+        <div className="w-1/2 h-3 bg-gray-200 rounded"></div>
+      </div>
+    </div>
+  )
+}
 
 export default function BlogsPage() {
-  const [articles, setArticles] = useState<any[]>([])
-  const [filteredArticles, setFilteredArticles] = useState<any[]>([])
+  const [allBlogs, setAllBlogs] = useState<BlogClient[]>([])
+  const [featuredBlogs, setFeaturedBlogs] = useState<BlogClient[]>([])
+  const [currentSlide, setCurrentSlide] = useState(0)
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const [displayCount, setDisplayCount] = useState(9)
   const [searchTerm, setSearchTerm] = useState("")
+  const [selectedCategory, setSelectedCategory] = useState("all")
+  const [categories, setCategories] = useState<{ id: string; name: string }[]>([])
 
   useEffect(() => {
-    const fetchArticles = async () => {
+    const fetchBlogs = async () => {
+      setLoading(true)
       try {
+        // Fetch all blogs that should be published
         const { data, error } = await supabase
-          .from("articles")
+          .from("blogs")
           .select("*")
-          .eq("status", "published")
+          .eq("publish_immediately", true)
           .order("created_at", { ascending: false })
+          .limit(50)
 
         if (error) {
-          throw error
-        }
+          console.error("Error fetching blogs:", error)
+        } else {
+          // Convert snake_case to camelCase
+          const formattedData = data.map(snakeToCamel)
 
-        setArticles(data || [])
-        setFilteredArticles(data || [])
-      } catch (err) {
-        console.error("Failed to fetch articles:", err)
-        setError("Failed to load articles. Please try again later.")
+          // Set featured blogs (those marked as featured_post)
+          const featured = formattedData.filter((blog) => blog.featuredPost).slice(0, 4)
+          setFeaturedBlogs(featured)
+
+          // Set all blogs
+          setAllBlogs(formattedData || [])
+
+          // Extract unique categories
+          const uniqueCategories = [...new Set(formattedData.map((blog) => blog.category))]
+          const categoryOptions = [
+            { id: "all", name: "All Blogs" },
+            ...uniqueCategories.map((cat) => ({ id: cat, name: cat })),
+          ]
+          setCategories(categoryOptions)
+        }
+      } catch (error) {
+        console.error("Unexpected error:", error)
       } finally {
         setLoading(false)
       }
     }
 
-    fetchArticles()
+    fetchBlogs()
   }, [])
 
+  // Auto-slide functionality
   useEffect(() => {
-    if (searchTerm.trim() === "") {
-      setFilteredArticles(articles)
-    } else {
-      const filtered = articles.filter(
-        (article) =>
-          article.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          article.excerpt?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          article.category?.toLowerCase().includes(searchTerm.toLowerCase()),
-      )
-      setFilteredArticles(filtered)
+    if (featuredBlogs.length > 1) {
+      const timer = setInterval(() => {
+        setCurrentSlide((prev) => (prev + 1) % featuredBlogs.length)
+      }, 6000)
+      return () => clearInterval(timer)
     }
-  }, [searchTerm, articles])
+  }, [featuredBlogs.length])
 
-  if (loading) {
-    return (
-      <div className="relative">
-        <StructuralBackground />
-        <div className="relative z-10">
-          {/* Header Section */}
-          <section className="py-8 sm:py-12 bg-gray-50">
-            <div className="container max-w-7xl mx-auto px-4 sm:px-6">
-              <div className="text-center sm:text-left">
-                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 leading-tight mb-3 sm:mb-4">
-                  Our <span className="text-red-500">Blog</span>
-                </h1>
-                <p className="text-gray-600 text-sm sm:text-base lg:text-lg leading-relaxed max-w-3xl mx-auto sm:mx-0">
-                  Insights, updates, and expertise from the world of structural engineering and construction.
-                </p>
-                <div className="w-16 sm:w-20 h-1 bg-red-500 mt-4 mx-auto sm:mx-0"></div>
-              </div>
-            </div>
-          </section>
-
-          <section className="py-8 sm:py-12 md:py-16 lg:py-24">
-            <div className="container px-4 sm:px-6">
-              <div className="grid gap-6 sm:gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-                {[...Array(6)].map((_, i) => (
-                  <Card key={i} className="overflow-hidden animate-pulse">
-                    <div className="aspect-[4/3] bg-gray-200"></div>
-                    <CardContent className="p-4 sm:p-6">
-                      <div className="h-4 bg-gray-200 rounded mb-2"></div>
-                      <div className="h-3 bg-gray-200 rounded mb-4"></div>
-                      <div className="flex gap-2">
-                        <div className="h-6 w-16 bg-gray-200 rounded"></div>
-                        <div className="h-6 w-20 bg-gray-200 rounded"></div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            </div>
-          </section>
-        </div>
-      </div>
-    )
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % featuredBlogs.length)
   }
 
-  if (error) {
-    return (
-      <div className="relative">
-        <StructuralBackground />
-        <div className="relative z-10">
-          {/* Header Section */}
-          <section className="py-8 sm:py-12 bg-gray-50">
-            <div className="container max-w-7xl mx-auto px-4 sm:px-6">
-              <div className="text-center sm:text-left">
-                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 leading-tight mb-3 sm:mb-4">
-                  Our <span className="text-red-500">Blog</span>
-                </h1>
-                <p className="text-gray-600 text-sm sm:text-base lg:text-lg leading-relaxed max-w-3xl mx-auto sm:mx-0">
-                  Insights, updates, and expertise from the world of structural engineering and construction.
-                </p>
-                <div className="w-16 sm:w-20 h-1 bg-red-500 mt-4 mx-auto sm:mx-0"></div>
-              </div>
-            </div>
-          </section>
-
-          <section className="py-8 sm:py-12 md:py-16 lg:py-24">
-            <div className="container px-4 sm:px-6">
-              <div className="text-center">
-                <p className="text-red-600 mb-4 text-sm sm:text-base">{error}</p>
-                <Button onClick={() => window.location.reload()} variant="outline">
-                  Try Again
-                </Button>
-              </div>
-            </div>
-          </section>
-        </div>
-      </div>
-    )
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + featuredBlogs.length) % featuredBlogs.length)
   }
+
+  const loadMore = () => {
+    setDisplayCount((prev) => prev + 9)
+  }
+
+  // Filter blogs based on search and category
+  const filteredBlogs = allBlogs.filter((blog) => {
+    const matchesSearch =
+      blog.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      blog.excerpt.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      blog.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      blog.tag.toLowerCase().includes(searchTerm.toLowerCase())
+    const matchesCategory = selectedCategory === "all" || blog.category === selectedCategory
+    return matchesSearch && matchesCategory
+  })
 
   return (
-    <div className="relative">
+    <div className="min-h-screen bg-white relative">
       <StructuralBackground />
       <div className="relative z-10">
-        {/* Header Section */}
+        {/* Title Section */}
         <section className="py-8 sm:py-12 bg-gray-50">
           <div className="container max-w-7xl mx-auto px-4 sm:px-6">
-            <div className="text-center sm:text-left">
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 leading-tight mb-3 sm:mb-4">
-                Our <span className="text-red-500">Blog</span>
-              </h1>
-              <p className="text-gray-600 text-sm sm:text-base lg:text-lg leading-relaxed max-w-3xl mx-auto sm:mx-0">
-                Insights, updates, and expertise from the world of structural engineering and construction.
-              </p>
-              <div className="w-16 sm:w-20 h-1 bg-red-500 mt-4 mx-auto sm:mx-0"></div>
-            </div>
-          </div>
-        </section>
-
-        {/* Search Section */}
-        <section className="py-6 sm:py-8 bg-white border-b">
-          <div className="container px-4 sm:px-6">
-            <div className="max-w-md mx-auto">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                <Input
-                  type="text"
-                  placeholder="Search articles..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10 h-10 sm:h-12"
-                />
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:gap-6">
+              <div className="text-center md:text-left">
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 leading-tight mb-2">
+                  Engineering <span className="text-red-500">Insights</span>
+                </h1>
+                <p className="text-gray-600 text-sm sm:text-base lg:text-lg leading-relaxed">
+                  Expert perspectives and technical knowledge from our engineering team.
+                </p>
+                <div className="w-16 sm:w-20 h-1 bg-red-500 mt-4 mx-auto md:mx-0"></div>
               </div>
-              {searchTerm && (
-                <p className="text-xs sm:text-sm text-gray-600 mt-2 text-center">
-                  Showing {filteredArticles.length} of {articles.length} articles
-                </p>
-              )}
+              <div className="w-full md:w-1/3 max-w-md mx-auto md:mx-0">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                  <Input
+                    type="text"
+                    placeholder="Search blogs..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10 pr-4 py-2 h-10 sm:h-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </section>
 
-        {/* Articles Grid */}
-        <section className="py-8 sm:py-12 md:py-16 lg:py-24">
-          <div className="container px-4 sm:px-6">
-            {filteredArticles.length === 0 ? (
-              <div className="text-center py-8 sm:py-12">
-                <BookOpen className="h-12 w-12 sm:h-16 sm:w-16 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-2">
-                  {searchTerm ? "No Articles Found" : "No Articles Available"}
-                </h3>
-                <p className="text-gray-600 text-sm sm:text-base mb-4">
-                  {searchTerm
-                    ? "Try adjusting your search terms to find what you're looking for."
-                    : "We're working on creating valuable content for you. Please check back soon."}
-                </p>
+        {/* Category Filter */}
+        <section className="py-4 sm:py-6 bg-white border-b">
+          <div className="container max-w-7xl mx-auto px-4 sm:px-6">
+            <div className="flex items-center justify-start md:justify-center space-x-2 sm:space-x-4 overflow-x-auto pb-2 scrollbar-hide">
+              {categories.map((category) => (
+                <Button
+                  key={category.id}
+                  variant={selectedCategory === category.id ? "default" : "outline"}
+                  onClick={() => setSelectedCategory(category.id)}
+                  className={`rounded-full px-3 sm:px-4 py-2 text-xs sm:text-sm whitespace-nowrap transition-all duration-200 min-w-fit ${
+                    selectedCategory === category.id
+                      ? "bg-red-500 hover:bg-red-600 text-white"
+                      : "border-gray-300 hover:border-red-500 text-gray-700 hover:text-red-500"
+                  }`}
+                >
+                  {category.name}
+                </Button>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Featured Blog Slider */}
+        {featuredBlogs.length > 0 && (
+          <section className="py-6 sm:py-8">
+            <div className="container max-w-7xl mx-auto px-4 sm:px-6">
+              <div className="mb-4 sm:mb-6">
+                <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">Featured Blogs</h2>
+                <div className="w-12 sm:w-16 h-1 bg-red-500"></div>
+              </div>
+
+              <div className="relative overflow-hidden rounded-xl sm:rounded-2xl shadow-xl sm:shadow-2xl">
+                <div
+                  className="flex transition-transform duration-500 ease-in-out"
+                  style={{ transform: `translateX(-${currentSlide * 100}%)` }}
+                >
+                  {featuredBlogs.map((blog, index) => (
+                    <div key={blog.id} className="w-full flex-shrink-0 relative">
+                      <Link href={`/blogs/${blog.id}`} prefetch={false} className="block">
+                        <div className="relative aspect-[16/9] sm:aspect-[21/9] md:aspect-[21/8]">
+                          <Image
+                            src={blog.image || "/placeholder.svg?height=400&width=1200"}
+                            alt={blog.title}
+                            fill
+                            className="object-cover"
+                            priority={index === 0}
+                            loading={index === 0 ? "eager" : "lazy"}
+                            sizes="100vw"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/30 to-transparent"></div>
+
+                          {/* Content Overlay */}
+                          <div className="absolute inset-0 flex items-center">
+                            <div className="container max-w-7xl mx-auto px-4 sm:px-6">
+                              <div className="max-w-xl sm:max-w-2xl text-white">
+                                <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
+                                  <span className="bg-red-500 text-white px-2 sm:px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide flex items-center">
+                                    <Star className="w-2 sm:w-3 h-2 sm:h-3 mr-1" />
+                                    FEATURED
+                                  </span>
+                                  <Badge variant="outline" className="border-white/30 text-white text-xs">
+                                    {blog.category}
+                                  </Badge>
+                                  <span className="text-xs sm:text-sm opacity-90">{formatTimeAgo(blog.createdAt)}</span>
+                                </div>
+                                <h2 className="text-lg sm:text-2xl md:text-4xl font-bold leading-tight mb-2 sm:mb-4 line-clamp-2">
+                                  {blog.title}
+                                </h2>
+                                <p className="text-sm sm:text-lg opacity-90 mb-4 sm:mb-6 line-clamp-2 sm:line-clamp-3">
+                                  {blog.excerpt || blog.content?.substring(0, 150) + "..." || "No content available"}
+                                </p>
+                                <Button className="bg-red-500 hover:bg-red-600 text-white font-semibold text-xs sm:text-sm">
+                                  READ BLOG
+                                  <ArrowRight className="ml-2 h-3 w-3 sm:h-4 sm:w-4" />
+                                </Button>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </Link>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Navigation Arrows */}
+                {featuredBlogs.length > 1 && (
+                  <>
+                    <button
+                      onClick={prevSlide}
+                      className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white p-1.5 sm:p-2 rounded-full transition-all duration-200"
+                      aria-label="Previous slide"
+                    >
+                      <ChevronLeft className="w-4 h-4 sm:w-6 sm:h-6" />
+                    </button>
+                    <button
+                      onClick={nextSlide}
+                      className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white p-1.5 sm:p-2 rounded-full transition-all duration-200"
+                      aria-label="Next slide"
+                    >
+                      <ChevronRight className="w-4 h-4 sm:w-6 sm:h-6" />
+                    </button>
+
+                    {/* Slide Indicators */}
+                    <div className="absolute bottom-3 sm:bottom-4 left-1/2 -translate-x-1/2 flex space-x-1 sm:space-x-2">
+                      {featuredBlogs.map((_, index) => (
+                        <button
+                          key={index}
+                          onClick={() => setCurrentSlide(index)}
+                          className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full transition-all duration-200 ${
+                            index === currentSlide ? "bg-red-500" : "bg-white/50 hover:bg-white/70"
+                          }`}
+                          aria-label={`Go to slide ${index + 1}`}
+                        />
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {/* All Blogs Grid */}
+        <section className="py-8 sm:py-12 md:py-16 bg-gray-50">
+          <div className="container max-w-7xl mx-auto px-4 sm:px-6">
+            <div className="mb-8 sm:mb-12">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-2">Latest Blogs</h2>
+              <div className="w-16 sm:w-20 h-1 bg-red-500 mb-4"></div>
+              <p className="text-gray-600 text-sm sm:text-base">
+                {filteredBlogs.length} blog{filteredBlogs.length !== 1 ? "s" : ""} available
+              </p>
+            </div>
+
+            {loading ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+                {[...Array(9)].map((_, i) => (
+                  <BlogCardSkeleton key={i} />
+                ))}
+              </div>
+            ) : filteredBlogs.length === 0 ? (
+              <div className="text-center py-12 sm:py-24">
+                <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6">
+                  <Search className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 text-gray-400" />
+                </div>
+                <h3 className="text-xl sm:text-2xl font-bold text-gray-600 mb-2">No blogs found</h3>
+                <p className="text-gray-500 text-sm sm:text-base mb-4">Try adjusting your search or filter criteria</p>
                 {searchTerm && (
                   <Button onClick={() => setSearchTerm("")} variant="outline">
                     Clear Search
@@ -200,88 +341,83 @@ export default function BlogsPage() {
                 )}
               </div>
             ) : (
-              <div className="grid gap-6 sm:gap-8 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
-                {filteredArticles.map((article) => (
-                  <Card key={article.id} className="group overflow-hidden hover:shadow-xl transition-all duration-300">
-                    <Link href={`/blogs/${article.id}`}>
-                      <div className="aspect-[4/3] relative overflow-hidden">
-                        <Image
-                          src={article.featured_image || "/placeholder.svg?height=300&width=400"}
-                          alt={article.title}
-                          fill
-                          className="object-cover transition-transform duration-300 group-hover:scale-105"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-                        {/* Category Badge */}
-                        {article.category && (
-                          <div className="absolute top-3 sm:top-4 left-3 sm:left-4">
-                            <Badge className="bg-red-500 hover:bg-red-600 text-white text-xs font-medium">
-                              {article.category}
-                            </Badge>
+              <>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+                  {filteredBlogs.slice(0, displayCount).map((blog) => (
+                    <Link key={blog.id} href={`/blogs/${blog.id}`} prefetch={false}>
+                      <Card className="group cursor-pointer hover:shadow-xl sm:hover:shadow-2xl transition-all duration-300 border-0 overflow-hidden h-full bg-white">
+                        <div className="relative aspect-[16/10] overflow-hidden">
+                          <Image
+                            src={blog.image || "/placeholder.svg?height=300&width=500"}
+                            alt={blog.title}
+                            fill
+                            className="object-cover group-hover:scale-110 transition-transform duration-500"
+                            loading="lazy"
+                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+                          <div className="absolute bottom-3 sm:bottom-4 left-3 sm:left-4 right-3 sm:right-4">
+                            <div className="text-white">
+                              <div className="flex items-center space-x-2 text-xs mb-2 opacity-90">
+                                <Calendar className="w-3 h-3" />
+                                <span>{formatTimeAgo(blog.createdAt)}</span>
+                                <span>•</span>
+                                <Clock className="w-3 h-3" />
+                                <span>5 min read</span>
+                              </div>
+                              <h3 className="font-bold text-sm sm:text-lg leading-tight mb-2 line-clamp-2">
+                                {blog.title}
+                              </h3>
+                            </div>
                           </div>
-                        )}
-                      </div>
-
-                      <CardContent className="p-4 sm:p-6">
-                        <h3 className="text-lg sm:text-xl font-bold mb-2 text-gray-900 group-hover:text-red-600 transition-colors line-clamp-2">
-                          {article.title}
-                        </h3>
-
-                        {article.excerpt && (
-                          <p className="text-gray-600 text-sm sm:text-base mb-4 line-clamp-3 leading-relaxed">
-                            {article.excerpt}
+                          <div className="absolute top-3 sm:top-4 right-3 sm:right-4 flex space-x-2">
+                            <Badge className="bg-red-500 text-white text-xs font-bold">{blog.category}</Badge>
+                            {blog.featuredPost && (
+                              <Badge className="bg-yellow-500 text-white text-xs font-bold flex items-center">
+                                <Star className="w-2 h-2 mr-1" />
+                                Featured
+                              </Badge>
+                            )}
+                          </div>
+                        </div>
+                        <CardContent className="p-4 sm:p-6 bg-white flex-1">
+                          <p className="text-gray-600 text-xs sm:text-sm line-clamp-3 mb-4 leading-relaxed">
+                            {blog.excerpt || blog.content?.substring(0, 150) + "..." || "No content available"}
                           </p>
-                        )}
-
-                        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4 text-xs sm:text-sm text-gray-500">
-                          <div className="flex items-center gap-2">
-                            <User className="h-3 w-3 sm:h-4 sm:w-4" />
-                            <span>{article.author || "Arrow Structures"}</span>
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center space-x-2 text-xs text-gray-500">
+                              <Badge variant="outline" className="text-xs">
+                                {blog.tag}
+                              </Badge>
+                            </div>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="text-red-500 hover:text-red-600 p-0 text-xs sm:text-sm"
+                            >
+                              READ MORE <ArrowRight className="ml-1 h-3 w-3" />
+                            </Button>
                           </div>
-
-                          <div className="flex items-center gap-2">
-                            <Calendar className="h-3 w-3 sm:h-4 sm:w-4" />
-                            <span>{new Date(article.created_at).toLocaleDateString()}</span>
-                          </div>
-                        </div>
-
-                        <div className="mt-4 pt-4 border-t border-gray-100">
-                          <div className="flex items-center text-red-600 text-sm font-medium group-hover:text-red-700 transition-colors">
-                            Read More
-                            <ArrowRight className="h-4 w-4 ml-1 transition-transform group-hover:translate-x-1" />
-                          </div>
-                        </div>
-                      </CardContent>
+                        </CardContent>
+                      </Card>
                     </Link>
-                  </Card>
-                ))}
-              </div>
-            )}
-          </div>
-        </section>
+                  ))}
+                </div>
 
-        {/* Newsletter CTA */}
-        <section className="py-8 sm:py-12 md:py-16 lg:py-24 bg-gray-50 border-t">
-          <div className="container px-4 sm:px-6">
-            <div className="max-w-3xl mx-auto text-center">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-gray-900 mb-4 sm:mb-6">
-                Stay Updated
-              </h2>
-              <div className="h-1 w-16 sm:w-20 bg-red-500 mx-auto mb-4 sm:mb-6"></div>
-              <p className="text-base sm:text-lg lg:text-xl text-gray-600 mb-6 sm:mb-8 leading-relaxed px-4">
-                Get the latest insights on structural engineering, construction trends, and industry updates delivered
-                to your inbox.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button asChild size="lg" className="bg-red-500 hover:bg-red-600 text-white">
-                  <Link href="/contact">Subscribe to Newsletter</Link>
-                </Button>
-                <Button asChild size="lg" variant="outline">
-                  <Link href="/projects">View Our Projects</Link>
-                </Button>
-              </div>
-            </div>
+                {/* Load More Button */}
+                {displayCount < filteredBlogs.length && (
+                  <div className="text-center mt-8 sm:mt-12">
+                    <Button
+                      onClick={loadMore}
+                      variant="outline"
+                      className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white px-6 sm:px-8"
+                    >
+                      Load More Blogs
+                    </Button>
+                  </div>
+                )}
+              </>
+            )}
           </div>
         </section>
       </div>

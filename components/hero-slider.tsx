@@ -43,29 +43,20 @@ export function HeroSlider() {
     return () => clearInterval(interval)
   }, [slides])
 
-  const nextSlide = () => {
-    setCurrentSlide((prev) => (prev === slides.length - 1 ? 0 : prev + 1))
-  }
-
-  const prevSlide = () => {
-    setCurrentSlide((prev) => (prev === 0 ? slides.length - 1 : prev - 1))
-  }
-
-  // ✅ Custom spinner UI
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-[80vh]">
-        <div className="w-12 h-12 border-4 border-red-500 border-t-transparent rounded-full animate-spin" />
+      <div className="flex items-center justify-center h-[50vh] sm:h-[70vh]">
+        <div className="w-8 h-8 border-4 border-red-500 border-t-transparent rounded-full animate-spin" />
       </div>
     )
   }
 
   if (slides.length === 0) {
-    return <div className="flex items-center justify-center h-[80vh] text-white text-lg">No slides found.</div>
+    return <div className="flex items-center justify-center h-[50vh] sm:h-[70vh] text-gray-600">No slides found.</div>
   }
 
   return (
-    <section className="relative h-[80vh] overflow-hidden">
+    <section className="relative h-[50vh] sm:h-[70vh] overflow-hidden">
       {slides.map((slide, index) => (
         <div
           key={slide.id}
@@ -79,48 +70,77 @@ export function HeroSlider() {
             alt={slide.title}
             fill
             className="object-cover"
-            priority
+            priority={index === 0}
           />
-          <div className="absolute inset-0 bg-black/50" />
-          <div className="container relative z-10 flex h-full flex-col justify-center text-white">
-            <h1 className="text-5xl font-bold tracking-tighter sm:text-6xl xl:text-7xl/none">{slide.title}</h1>
-            <p className="mt-4 max-w-[600px] text-base sm:text-xl">{slide.description}</p>
-            <Button asChild className="mt-8 w-fit" size="lg">
-              <Link href="/portfolio">View Project</Link>
-            </Button>
+          <div className="absolute inset-0 bg-black/40" />
+
+          {/* Content */}
+          <div className="container relative z-10 flex h-full items-center text-white px-4">
+            <div className="max-w-2xl">
+              <h1 className="text-2xl sm:text-4xl md:text-5xl font-bold mb-4">{slide.title}</h1>
+              <p className="text-sm sm:text-lg mb-6 opacity-90">{slide.description}</p>
+              <Button asChild size="lg">
+                <Link href="/portfolio">View Projects</Link>
+              </Button>
+            </div>
           </div>
         </div>
       ))}
 
-      {/* Stats Overlay */}
- 
-      <div className="absolute bottom-0 right-0 ">
-        <div className="container py-8">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center text-white">
-            <div className="space-y-2">
-              <Building2 className="h-4 w-4 mx-auto mb-2 text-white/80" />
-              <div className="text-1xl md:text-2xl font-bold">500+</div>
-              <div className="text-sm md:text-base opacity-90">Projects Completed</div>
+      {/* Stats Overlay - Same design for mobile and web */}
+      <div className="absolute bottom-0 right-0">
+        <div className="container py-4 sm:py-6 md:py-8 px-4 sm:px-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 md:gap-6 text-center text-white">
+            <div className="space-y-1 sm:space-y-2">
+              <Building2 className="h-3 w-3 sm:h-4 sm:w-4 mx-auto mb-1 text-white/80" />
+              <div className="text-sm sm:text-base md:text-xl lg:text-2xl font-bold">500+</div>
+              <div className="text-xs sm:text-sm md:text-base opacity-90">
+                <span className="block sm:hidden">Projects</span>
+                <span className="hidden sm:block">Projects Completed</span>
+              </div>
             </div>
-            <div className="space-y-2">
-              <Users2 className="h-4 w-4 mx-auto mb-2 text-white/80" />
-              <div className="text-1xl md:text-2xl font-bold">50+</div>
-              <div className="text-sm md:text-base opacity-90">Team Members</div>
+            <div className="space-y-1 sm:space-y-2">
+              <Users2 className="h-3 w-3 sm:h-4 sm:w-4 mx-auto mb-1 text-white/80" />
+              <div className="text-sm sm:text-base md:text-xl lg:text-2xl font-bold">50+</div>
+              <div className="text-xs sm:text-sm md:text-base opacity-90">
+                <span className="block sm:hidden">Team</span>
+                <span className="hidden sm:block">Team Members</span>
+              </div>
             </div>
-            <div className="space-y-2">
-              <Award className="h-4 w-4 mx-auto mb-2 text-white/80" />
-              <div className="text-1xl md:text-2xl font-bold">25+</div>
-              <div className="text-sm md:text-base opacity-90">Awards Won</div>
+            <div className="space-y-1 sm:space-y-2">
+              <Award className="h-3 w-3 sm:h-4 sm:w-4 mx-auto mb-1 text-white/80" />
+              <div className="text-sm sm:text-base md:text-xl lg:text-2xl font-bold">25+</div>
+              <div className="text-xs sm:text-sm md:text-base opacity-90">
+                <span className="block sm:hidden">Awards</span>
+                <span className="hidden sm:block">Awards Won</span>
+              </div>
             </div>
-            <div className="space-y-2">
-              <Calendar className="h-4 w-4 mx-auto mb-2 text-white/80" />
-              <div className="text-1xl md:text-2xl font-bold">15+</div>
-              <div className="text-sm md:text-base opacity-90">Years Experience</div>
+            <div className="space-y-1 sm:space-y-2">
+              <Calendar className="h-3 w-3 sm:h-4 sm:w-4 mx-auto mb-1 text-white/80" />
+              <div className="text-sm sm:text-base md:text-xl lg:text-2xl font-bold">15+</div>
+              <div className="text-xs sm:text-sm md:text-base opacity-90">
+                <span className="block sm:hidden">Experience</span>
+                <span className="hidden sm:block">Years Experience</span>
+              </div>
             </div>
           </div>
         </div>
       </div>
-      
+
+      {/* Simple dots indicator */}
+      {slides.length > 1 && (
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-2 z-20">
+          {slides.map((_, index) => (
+            <button
+              key={index}
+              onClick={() => setCurrentSlide(index)}
+              className={`w-2 h-2 rounded-full transition-colors ${
+                index === currentSlide ? "bg-white" : "bg-white/50"
+              }`}
+            />
+          ))}
+        </div>
+      )}
     </section>
   )
 }

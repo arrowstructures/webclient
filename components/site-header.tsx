@@ -54,27 +54,27 @@ export function SiteHeader() {
     <>
       <header
         className={cn(
-          "sticky top-0 z-50 w-full transition-all duration-200",
-          isScrolled ? "bg-white shadow-md" : "bg-transparent",
+          "sticky top-0 z-50 w-full transition-all duration-300 ease-out",
+          isScrolled ? "bg-white/95 backdrop-blur-md shadow-lg" : "bg-transparent",
         )}
       >
         <div className="container flex h-14 sm:h-16 items-center justify-between px-4 sm:px-6 py-2 sm:py-4">
           {/* Logo */}
           <Link
             href="/"
-            className="flex items-center space-x-2 sm:space-x-3 transition-all duration-200 ease-in-out hover:scale-105 transform"
+            className="flex items-center space-x-2 sm:space-x-3 transition-all duration-300 ease-out hover:scale-105 transform"
           >
             <Image
               src="/logo.png"
               alt="Logo"
               width={32}
               height={32}
-              className="object-contain sm:w-10 sm:h-10"
+              className="object-contain sm:w-10 sm:h-10 transition-all duration-300"
               priority
             />
             <div className="flex flex-col items-start">
               <span
-                className="text-gray-900 font-bold leading-none tracking-tight text-sm sm:text-lg"
+                className="text-gray-900 font-bold leading-none tracking-tight text-sm sm:text-lg transition-colors duration-300"
                 style={{
                   fontFamily: "Roboto, 'Helvetica Neue', Arial, sans-serif",
                   letterSpacing: "0.1em",
@@ -83,7 +83,7 @@ export function SiteHeader() {
                 ARROW
               </span>
               <span
-                className="text-gray-900 font-bold leading-none tracking-tight text-sm sm:text-lg"
+                className="text-gray-900 font-bold leading-none tracking-tight text-sm sm:text-lg transition-colors duration-300"
                 style={{
                   fontFamily: "Roboto, 'Helvetica Neue', Arial, sans-serif",
                   letterSpacing: "0.1em",
@@ -101,8 +101,9 @@ export function SiteHeader() {
                 key={item.name}
                 href={item.href}
                 className={cn(
-                  "text-sm font-medium transition-all duration-200 ease-in-out hover:scale-105 hover:text-primary transform",
-                  pathname === item.href ? "text-primary font-semibold" : "text-muted-foreground",
+                  "text-sm font-medium transition-all duration-300 ease-out hover:scale-105 hover:text-primary transform relative",
+                  "after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-0 after:bg-primary after:transition-all after:duration-300 hover:after:w-full",
+                  pathname === item.href ? "text-primary font-semibold after:w-full" : "text-muted-foreground",
                 )}
               >
                 {item.name}
@@ -114,45 +115,93 @@ export function SiteHeader() {
           <Button
             variant="ghost"
             size="icon"
-            className="lg:hidden h-10 w-10"
+            className="lg:hidden h-10 w-10 transition-all duration-300 ease-out hover:scale-110 hover:bg-gray-100/80"
             onClick={() => setIsOpen(!isOpen)}
             aria-label="Toggle menu"
           >
-            {isOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+            <div className="relative w-6 h-6">
+              <Menu
+                className={cn(
+                  "h-6 w-6 absolute inset-0 transition-all duration-300 ease-out",
+                  isOpen ? "opacity-0 rotate-90 scale-75" : "opacity-100 rotate-0 scale-100",
+                )}
+              />
+              <X
+                className={cn(
+                  "h-6 w-6 absolute inset-0 transition-all duration-300 ease-out",
+                  isOpen ? "opacity-100 rotate-0 scale-100" : "opacity-0 rotate-90 scale-75",
+                )}
+              />
+            </div>
           </Button>
         </div>
       </header>
 
       {/* Mobile Navigation Overlay */}
-      {isOpen && (
-        <div className="fixed inset-0 z-40 lg:hidden">
-          {/* Backdrop */}
-          <div className="fixed inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setIsOpen(false)} />
+      <div
+        className={cn(
+          "fixed inset-0 z-40 lg:hidden transition-all duration-500 ease-out",
+          isOpen ? "visible" : "invisible",
+        )}
+      >
+        {/* Backdrop */}
+        <div
+          className={cn(
+            "fixed inset-0 bg-black/60 backdrop-blur-sm transition-all duration-500 ease-out",
+            isOpen ? "opacity-100" : "opacity-0",
+          )}
+          onClick={() => setIsOpen(false)}
+        />
 
-          {/* Mobile Menu */}
-          <div className="fixed top-14 sm:top-16 left-0 right-0 bg-white border-t shadow-lg">
-            <div className="container py-6 px-4 sm:px-6">
-              <nav className="flex flex-col space-y-1">
-                {navItems.map((item) => (
-                  <Link
-                    key={item.name}
-                    href={item.href}
-                    className={cn(
-                      "text-base font-medium transition-all duration-200 ease-in-out hover:bg-gray-50 rounded-lg px-4 py-3 -mx-4",
-                      pathname === item.href
-                        ? "text-primary font-semibold bg-primary/5"
-                        : "text-muted-foreground hover:text-primary",
-                    )}
-                    onClick={() => setIsOpen(false)}
-                  >
-                    {item.name}
-                  </Link>
-                ))}
-              </nav>
-            </div>
+        {/* Mobile Menu - Slides from Right */}
+        <div
+          className={cn(
+            "fixed top-14 sm:top-16 right-0 w-80 h-full bg-white/95 backdrop-blur-md shadow-2xl",
+            "transform transition-all duration-500 ease-out",
+            isOpen ? "translate-x-0" : "translate-x-full",
+          )}
+        >
+          <div className="py-8 px-6 h-full overflow-y-auto">
+            <nav className="flex flex-col space-y-2">
+              {navItems.map((item, index) => (
+                <Link
+                  key={item.name}
+                  href={item.href}
+                  className={cn(
+                    "text-base font-medium transition-all duration-300 ease-out",
+                    "hover:bg-gray-100/80 hover:scale-105 rounded-xl px-4 py-4 -mx-4",
+                    "transform hover:translate-x-2 relative overflow-hidden",
+                    "before:absolute before:left-0 before:top-0 before:h-full before:w-1 before:bg-primary before:transition-all before:duration-300",
+                    pathname === item.href
+                      ? "text-primary font-semibold bg-primary/10 before:opacity-100 translate-x-2"
+                      : "text-muted-foreground hover:text-primary before:opacity-0 hover:before:opacity-100",
+                  )}
+                  style={{
+                    animationDelay: `${index * 50}ms`,
+                    animation: isOpen ? `slideInRight 0.4s ease-out forwards` : "none",
+                  }}
+                  onClick={() => setIsOpen(false)}
+                >
+                  {item.name}
+                </Link>
+              ))}
+            </nav>
           </div>
         </div>
-      )}
+      </div>
+
+      <style jsx>{`
+        @keyframes slideInRight {
+          from {
+            opacity: 0;
+            transform: translateX(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateX(0);
+          }
+        }
+      `}</style>
     </>
   )
 }

@@ -101,23 +101,16 @@ export function HeroSlider() {
             </div>
             <div className="space-y-1 sm:space-y-2">
               <Users2 className="h-3 w-3 sm:h-4 sm:w-4 mx-auto mb-1 text-white/80" />
-              <div className="text-sm sm:text-base md:text-xl lg:text-2xl font-bold">50+</div>
+              <div className="text-sm sm:text-base md:text-xl lg:text-2xl font-bold">10+</div>
               <div className="text-xs sm:text-sm md:text-base opacity-90">
                 <span className="block sm:hidden">Team</span>
                 <span className="hidden sm:block">Team Members</span>
               </div>
             </div>
-            <div className="space-y-1 sm:space-y-2">
-              <Award className="h-3 w-3 sm:h-4 sm:w-4 mx-auto mb-1 text-white/80" />
-              <div className="text-sm sm:text-base md:text-xl lg:text-2xl font-bold">25+</div>
-              <div className="text-xs sm:text-sm md:text-base opacity-90">
-                <span className="block sm:hidden">Awards</span>
-                <span className="hidden sm:block">Awards Won</span>
-              </div>
-            </div>
+        
             <div className="space-y-1 sm:space-y-2">
               <Calendar className="h-3 w-3 sm:h-4 sm:w-4 mx-auto mb-1 text-white/80" />
-              <div className="text-sm sm:text-base md:text-xl lg:text-2xl font-bold">15+</div>
+              <div className="text-sm sm:text-base md:text-xl lg:text-2xl font-bold">10+</div>
               <div className="text-xs sm:text-sm md:text-base opacity-90">
                 <span className="block sm:hidden">Experience</span>
                 <span className="hidden sm:block">Years Experience</span>

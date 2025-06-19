@@ -9,7 +9,7 @@ export function SiteFooter() {
     { name: "About", href: "/about" },
     { name: "Portfolio", href: "/portfolio" },
     { name: "Services", href: "/services" },
-    { name: "Blocks", href: "/blocks" },
+    { name: "Blogs", href: "/blogs" },
     { name: "Newsroom", href: "/newsroom" },
     { name: "Career", href: "/career" },
     { name: "Contact", href: "/contact" },

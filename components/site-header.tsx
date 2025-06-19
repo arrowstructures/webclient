@@ -74,19 +74,19 @@ export function SiteHeader() {
             />
             <div className="flex flex-col items-start">
               <span
-                className="text-gray-900 font-bold leading-none tracking-tight text-sm sm:text-lg transition-colors duration-300"
+                className="text-gray-900 font-regular leading-none tracking-tight text-sm sm:text-lg transition-colors duration-300"
                 style={{
-                  fontFamily: "Roboto, 'Helvetica Neue', Arial, sans-serif",
-                  letterSpacing: "0.1em",
+                  fontFamily: "Roboto, 'Helvetica Neue', Arial, sans-serif,bebas neue",
+                  letterSpacing: "0.2em",
                 }}
               >
                 ARROW
               </span>
               <span
-                className="text-gray-900 font-bold leading-none tracking-tight text-sm sm:text-lg transition-colors duration-300"
+                className="text-gray-900 font-regular leading-none tracking-tight text-sm sm:text-lg transition-colors duration-300"
                 style={{
-                  fontFamily: "Roboto, 'Helvetica Neue', Arial, sans-serif",
-                  letterSpacing: "0.1em",
+                  fontFamily: "Roboto, 'Helvetica Neue', Arial, sans-serif,bebas neue",
+                  letterSpacing: "0.2em",
                 }}
               >
                 STRUCTURES

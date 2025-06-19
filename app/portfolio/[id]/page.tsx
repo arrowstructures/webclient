@@ -3,32 +3,145 @@ import { createServerComponentClient } from "@supabase/auth-helpers-nextjs"
 import { cookies } from "next/headers"
 import Image from "next/image"
 import Link from "next/link"
-import { ArrowLeft, MapPin, Calendar, Ruler, Building2, CheckCircle } from "lucide-react"
+import { ArrowLeft, MapPin, Calendar, Building2, CheckCircle, Clock, AlertCircle } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+
+type ProjectStatus = "completed" | "ongoing" | "planning" | "on_hold"
+
+interface Project {
+  id: string
+  project_name: string
+  client: string
+  category: string
+  location: string
+  description: string
+  image: string
+  status: ProjectStatus
+  created_at: string
+}
 
 export default async function ProjectDetails({ params }: { params: { id: string } }) {
   const supabase = createServerComponentClient({ cookies })
 
-  const { data: project, error } = await supabase.from("projects").select("*").eq("id", params.id).single()
+  const { data: project, error } = (await supabase.from("projects").select("*").eq("id", params.id).single()) as {
+    data: Project | null
+    error: any
+  }
 
   if (error || !project) {
     console.error("Error fetching project:", error)
     return notFound()
   }
 
-  // Mock data for features (replace with actual data from your database)
-  const projectFeatures = [
-    "Modern architectural design with curved roof structure",
-    "Covered waiting areas for passenger comfort",
-    "Efficient bus bay layout and circulation",
-    "Integrated landscaping and street furniture",
-    "Sustainable lighting and ventilation systems",
-    "Passenger information display systems",
-    "Accessible design for all users",
-    "Integration with existing urban infrastructure",
-  ]
+  // Status configuration
+  const getStatusConfig = (status: ProjectStatus) => {
+    switch (status) {
+      case "completed":
+        return {
+          icon: CheckCircle,
+          label: "Completed",
+          className: "bg-green-500 text-white hover:bg-green-600",
+        }
+      case "ongoing":
+        return {
+          icon: Clock,
+          label: "Ongoing",
+          className: "bg-blue-500 text-white hover:bg-blue-600",
+        }
+      case "planning":
+        return {
+          icon: AlertCircle,
+          label: "Planning",
+          className: "bg-yellow-500 text-white hover:bg-yellow-600",
+        }
+      case "on_hold":
+        return {
+          icon: AlertCircle,
+          label: "On Hold",
+          className: "bg-gray-500 text-white hover:bg-gray-600",
+        }
+      default:
+        return {
+          icon: CheckCircle,
+          label: "Completed",
+          className: "bg-green-500 text-white hover:bg-green-600",
+        }
+    }
+  }
 
+  const statusConfig = getStatusConfig(project.status)
+  const StatusIcon = statusConfig.icon
+
+  // Format date
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    })
+  }
+
+  // Project features based on category
+  const getProjectFeatures = (category: string) => {
+    const baseFeatures = [
+      "Professional structural engineering design",
+      "Compliance with local building codes and regulations",
+      "Quality construction materials and techniques",
+      "Regular project monitoring and quality assurance",
+      "Timely project delivery and completion",
+      "Post-construction support and maintenance guidance",
+    ]
+
+    const categoryFeatures: Record<string, string[]> = {
+      residential: [
+        "Modern architectural design with optimal space utilization",
+        "Earthquake-resistant structural framework",
+        "Energy-efficient building systems",
+        "Premium finishing and interior design",
+        "Landscaped outdoor spaces",
+        "Smart home automation systems",
+        "Sustainable construction practices",
+        "Enhanced security features",
+      ],
+      commercial: [
+        "Modern commercial architecture design",
+        "Flexible office space layouts",
+        "Advanced HVAC and electrical systems",
+        "High-speed internet and communication infrastructure",
+        "Parking facilities and accessibility features",
+        "Energy-efficient lighting systems",
+        "Fire safety and security systems",
+        "Sustainable building practices",
+      ],
+      infrastructure: [
+        "Modern architectural design with curved roof structure",
+        "Covered waiting areas for passenger comfort",
+        "Efficient traffic flow and circulation design",
+        "Integrated landscaping and street furniture",
+        "Sustainable lighting and ventilation systems",
+        "Information display systems",
+        "Accessible design for all users",
+        "Integration with existing urban infrastructure",
+      ],
+      industrial: [
+        "Heavy-duty structural framework design",
+        "Industrial-grade electrical and mechanical systems",
+        "Efficient workflow and logistics planning",
+        "Safety systems and emergency protocols",
+        "Environmental compliance features",
+        "Scalable design for future expansion",
+        "Advanced material handling systems",
+        "Quality control and monitoring systems",
+      ],
+    }
+
+    return categoryFeatures[category.toLowerCase()] || baseFeatures
+  }
+
+  const projectFeatures = getProjectFeatures(project.category)
+
+  // Gallery images (you can extend this to fetch from a separate gallery table)
   const galleryImages = [
     project.image || "/placeholder.svg?height=400&width=600",
     "/placeholder.svg?height=400&width=600",
@@ -49,9 +162,9 @@ export default async function ProjectDetails({ params }: { params: { id: string 
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back to Portfolio
             </Link>
-            <Badge className="bg-red-500 text-white hover:bg-red-600">
-              <CheckCircle className="w-4 h-4 mr-2" />
-              Completed
+            <Badge className={statusConfig.className}>
+              <StatusIcon className="w-4 h-4 mr-2" />
+              {statusConfig.label}
             </Badge>
           </div>
 
@@ -64,19 +177,19 @@ export default async function ProjectDetails({ params }: { params: { id: string 
               <div className="grid md:grid-cols-2 gap-4 mb-8">
                 <div className="flex items-center text-gray-600">
                   <Building2 className="w-5 h-5 mr-3 text-red-500" />
-                  <span>{project.category || "Infrastructure"}</span>
+                  <span className="capitalize">{project.category}</span>
                 </div>
                 <div className="flex items-center text-gray-600">
                   <MapPin className="w-5 h-5 mr-3 text-red-500" />
-                  <span>Chennai, Tamil Nadu</span>
+                  <span>{project.location}</span>
                 </div>
                 <div className="flex items-center text-gray-600">
                   <Calendar className="w-5 h-5 mr-3 text-red-500" />
-                  <span>Completed 2024</span>
+                  <span>Started {formatDate(project.created_at)}</span>
                 </div>
                 <div className="flex items-center text-gray-600">
-                  <Ruler className="w-5 h-5 mr-3 text-red-500" />
-                  <span>25,000 sq.ft</span>
+                  <Building2 className="w-5 h-5 mr-3 text-red-500" />
+                  <span>Client: {project.client}</span>
                 </div>
               </div>
             </div>
@@ -88,6 +201,7 @@ export default async function ProjectDetails({ params }: { params: { id: string 
                 fill
                 className="object-cover"
                 priority
+                sizes="(max-width: 768px) 100vw, 50vw"
               />
             </div>
           </div>
@@ -116,38 +230,7 @@ export default async function ProjectDetails({ params }: { params: { id: string 
         </div>
       </section>
 
-      {/* Project Gallery */}
-      <section className="py-16 bg-white">
-        <div className="container max-w-7xl mx-auto px-4">
-          <div className="mb-12">
-            <h2 className="text-4xl font-bold text-gray-900 mb-2">Project Gallery</h2>
-            <div className="w-20 h-1 bg-red-500"></div>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {galleryImages.map((image, index) => (
-              <div
-                key={index}
-                className="relative aspect-square overflow-hidden rounded-lg shadow-lg group cursor-pointer"
-              >
-                <Image
-                  src={image || "/placeholder.svg"}
-                  alt={`${project.project_name} gallery ${index + 1}`}
-                  fill
-                  className="object-cover transition-transform duration-300 group-hover:scale-110"
-                />
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Project Specifications */}
-    
-
-           
-         
+ 
 
       {/* Call to Action */}
       <section className="py-16 bg-white border-t-4 border-red-500">

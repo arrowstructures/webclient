@@ -1,6 +1,79 @@
 export interface Database {
   public: {
     Tables: {
+      blogs: {
+        Row: {
+          id: string
+          title: string
+          excerpt: string
+          content: string
+          image: string
+          category: string
+          tag: string
+          featured_post: boolean
+          publish_immediately: boolean
+          created_at: string
+        }
+        Insert: {
+          id?: string
+          title: string
+          excerpt: string
+          content: string
+          image: string
+          category: string
+          tag: string
+          featured_post?: boolean
+          publish_immediately?: boolean
+          created_at?: string
+        }
+        Update: {
+          id?: string
+          title?: string
+          excerpt?: string
+          content?: string
+          image?: string
+          category?: string
+          tag?: string
+          featured_post?: boolean
+          publish_immediately?: boolean
+          created_at?: string
+        }
+      }
+      news: {
+        Row: {
+          id: string
+          headline: string
+          summary: string
+          content: string
+          image: string
+          featured_news: boolean
+          publish_immediately: boolean
+          created_at: string
+          updated_at: string
+        }
+        Insert: {
+          id?: string
+          headline: string
+          summary: string
+          content: string
+          image: string
+          featured_news?: boolean
+          publish_immediately?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+        Update: {
+          id?: string
+          headline?: string
+          summary?: string
+          content?: string
+          image?: string
+          featured_news?: boolean
+          publish_immediately?: boolean
+          created_at?: string
+          updated_at?: string
+        }
+      }
       articles: {
         Row: {
           id: string

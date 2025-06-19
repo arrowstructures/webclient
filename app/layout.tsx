@@ -1,8 +1,10 @@
 import "@/styles/globals.css"
 
+
 import type React from "react"
 
 import { Inter } from "next/font/google"
+
 
 import { SonnerProvider } from "@/components/sonner-provider"
 import { StorageInitializer } from "@/components/storage-initializer"
@@ -14,7 +16,7 @@ const inter = Inter({ subsets: ["latin"] })
 export const metadata = {
   title: "Arrow Structures - Structural Consultancy",
   description: "Innovative and sustainable structural solutions for modern construction projects",
-    
+    generator: 'v0.dev'
 }
 
 export default function RootLayout({

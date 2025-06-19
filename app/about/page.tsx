@@ -2,14 +2,12 @@
 
 import { useEffect, useState } from "react"
 import Image from "next/image"
-import { Award, Users, Building, Lightbulb, Mail, Phone, MapPin, ArrowRight } from "lucide-react"
+import { Award, Users, Building, Lightbulb } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Skeleton } from "@/components/ui/skeleton"
 import { supabase } from "@/lib/supabase"
 import { StructuralBackground } from "@/components/structural-background"
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
 
 type TeamMember = {
   id?: number
@@ -27,9 +25,8 @@ type TeamMember = {
 export default function AboutPage() {
   const stats = [
     { icon: Building, value: "500+", label: "Projects Completed" },
-    { icon: Users, value: "50+", label: "Team Members" },
-    { icon: Award, value: "25+", label: "Awards Won" },
-    { icon: Lightbulb, value: "15+", label: "Years Experience" },
+    { icon: Users, value: "10+", label: "Team Members" },
+    { icon: Lightbulb, value: "10+", label: "Years Experience" },
   ]
 
   const ceoData: TeamMember = {
@@ -69,54 +66,69 @@ export default function AboutPage() {
   }, [])
 
   const TeamMemberSkeleton = () => (
-    <div className="flex flex-col md:flex-row items-center gap-6 sm:gap-8">
-      <Skeleton className="w-full max-w-[280px] sm:max-w-[300px] md:w-[300px] h-[280px] sm:h-[300px] rounded-lg" />
-      <div className="flex-1 space-y-4 w-full">
-        <Skeleton className="h-6 sm:h-8 w-3/4" />
-        <Skeleton className="h-4 sm:h-6 w-full" />
-        <Skeleton className="h-3 sm:h-4 w-full" />
-        <Skeleton className="h-3 sm:h-4 w-full" />
-        <Skeleton className="h-3 sm:h-4 w-3/4" />
+    <div className="max-w-7xl mx-auto">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8 px-4">
+        {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+          <div key={i} className="text-center">
+            <div className="space-y-4 sm:space-y-5">
+              {/* Square Profile Image Skeleton */}
+              <div className="relative mx-auto">
+                <Skeleton className="w-40 h-40 sm:w-44 sm:h-44 md:w-48 md:h-48 lg:w-52 lg:h-52 rounded-lg mx-auto" />
+              </div>
+
+              {/* Member Info Skeleton */}
+              <div className="space-y-2 px-2">
+                <Skeleton className="h-4 sm:h-5 w-3/4 mx-auto" />
+                <Skeleton className="h-3 sm:h-4 w-full mx-auto" />
+                <Skeleton className="h-3 sm:h-4 w-2/3 mx-auto" />
+                <Skeleton className="h-3 w-4/5 mx-auto" />
+              </div>
+
+              {/* Badge Skeleton */}
+              <div className="flex gap-2 justify-center px-2">
+                <Skeleton className="h-6 w-16 rounded-full" />
+                <Skeleton className="h-6 w-8 rounded-full" />
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   )
 
   return (
-    <div className="relative">
+    <div className="relative min-h-screen">
       <StructuralBackground />
       <div className="relative z-10">
         {/* Hero Section */}
-        <section className="bg-muted py-8 sm:py-12 md:py-16 lg:py-24">
-          <div className="container px-4 sm:px-6">
-            <div className="grid gap-8 sm:gap-10 md:gap-12 lg:grid-cols-2 items-center">
+        <section className="bg-muted py-6 sm:py-8 md:py-12 lg:py-16">
+          <div className="container px-4 sm:px-6 max-w-7xl mx-auto">
+            <div className="grid gap-6 sm:gap-8 lg:grid-cols-2 items-center">
               <div className="space-y-4 sm:space-y-6 order-2 lg:order-1">
-                <Badge className="w-fit">Established 2017 • Growing Excellence</Badge>
+                <Badge className="w-fit text-xs sm:text-sm">Established 2017 • Growing Excellence</Badge>
                 <div>
-                  <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold tracking-tighter leading-tight">
+                  <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold tracking-tight leading-tight">
                     About Arrow Structures
                   </h1>
-                  <div className="mt-3 sm:mt-4 h-1 w-12 sm:w-16 bg-primary rounded-full"></div>
+                  <div className="mt-2 sm:mt-3 h-1 w-8 sm:w-12 bg-primary rounded-full"></div>
                 </div>
-                <p className="text-base sm:text-lg lg:text-xl text-muted-foreground leading-relaxed">
+                <p className="text-sm sm:text-base lg:text-lg text-muted-foreground leading-relaxed">
                   Established in 2017, Arrow Structures has emerged as a trusted name in the field of Structural
                   Consultancy and Civil Construction, recognized for its technical expertise, quality-driven approach,
                   and unwavering commitment to client satisfaction. What began as a focused structural engineering
                   practice has grown into one of the region's most respected firms, delivering excellence across a wide
                   spectrum of residential, commercial, and infrastructure projects.
                 </p>
-                <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
-                  <div className="flex items-center gap-2">
-                    <MapPin className="h-4 w-4" />
-                    <span>Regional Leader</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Award className="h-4 w-4" />
-                    <span>Quality Certified</span>
-                  </div>
-                </div>
               </div>
-              <div className="relative h-[300px] sm:h-[400px] md:h-[500px] w-full overflow-hidden rounded-xl shadow-2xl order-1 lg:order-2">
-                <Image src="/home.jpg" alt="Arrow Structures Office" fill className="object-cover" priority />
+              <div className="relative h-[250px] sm:h-[300px] md:h-[400px] lg:h-[500px] w-full overflow-hidden rounded-lg sm:rounded-xl shadow-xl order-1 lg:order-2">
+                <Image
+                  src="/home.jpg"
+                  alt="Arrow Structures Office"
+                  fill
+                  className="object-cover"
+                  priority
+                  sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 50vw"
+                />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
               </div>
             </div>
@@ -124,15 +136,20 @@ export default function AboutPage() {
         </section>
 
         {/* Stats Section */}
-        <section className="py-8 sm:py-12 md:py-16 lg:py-24">
-          <div className="container px-4 sm:px-6">
-            <div className="grid gap-4 sm:gap-6 md:gap-8 grid-cols-2 lg:grid-cols-4">
+        <section className="py-6 sm:py-8 md:py-12 lg:py-16">
+          <div className="container px-4 sm:px-6 max-w-7xl mx-auto">
+            <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-3">
               {stats.map((stat, index) => (
-                <Card key={stat.label} className="text-center border-0 shadow-lg hover:shadow-xl transition-shadow">
-                  <CardContent className="pt-4 sm:pt-6 pb-4 sm:pb-6 px-3 sm:px-6">
+                <Card
+                  key={stat.label}
+                  className="text-center border-0 shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+                >
+                  <CardContent className="pt-4 pb-4 px-4 sm:pt-6 sm:pb-6 sm:px-6">
                     <stat.icon className="h-8 w-8 sm:h-10 sm:w-10 md:h-12 md:w-12 text-primary mx-auto mb-3 sm:mb-4" />
-                    <div className="text-2xl sm:text-3xl font-bold mb-1 sm:mb-2">{stat.value}</div>
-                    <div className="text-xs sm:text-sm text-muted-foreground leading-tight">{stat.label}</div>
+                    <div className="text-xl sm:text-2xl md:text-3xl font-bold mb-1 sm:mb-2 text-primary">
+                      {stat.value}
+                    </div>
+                    <div className="text-xs sm:text-sm font-semibold text-gray-900 mb-1">{stat.label}</div>
                   </CardContent>
                 </Card>
               ))}
@@ -140,224 +157,268 @@ export default function AboutPage() {
           </div>
         </section>
 
-        {/* Company Story Section */}
-        <section className="py-8 sm:py-12 md:py-16 lg:py-24 bg-gray-100">
-          <div className="container px-4 sm:px-6">
-            <div className="max-w-4xl mx-auto text-center space-y-6 sm:space-y-8">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tighter">Our Story</h2>
-              <div className="space-y-4 sm:space-y-6 text-left">
-                <p className="text-base sm:text-lg text-muted-foreground leading-relaxed">
-                  At the heart of Arrow Structures is Er.Prabhu Dev, M.E., Ph.D., our Principal Structural Engineer and
-                  the visionary behind the firm. With a rich academic background and extensive field experience, Dr.
-                  Prabhu Dev brings a rare blend of engineering depth and practical insight, steering the firm with
-                  integrity, innovation, and a relentless pursuit of perfection.
-                </p>
-                <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-                  We believe that every structure is more than just concrete and steel — it is a story of purpose,
-                  design, and resilience. At Arrow Structures, we work closely with architects, contractors, and clients
-                  to ensure that each project reflects these values, from initial concept through to final completion.
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-
         {/* Mission & Vision Section */}
-        <section className="border-t py-8 sm:py-12 md:py-16 lg:py-24">
-          <div className="container px-4 sm:px-6">
-            <div className="text-center mb-8 sm:mb-12">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tighter mb-3 sm:mb-4">
+        <section className="border-t py-6 sm:py-8 md:py-12 lg:py-16">
+          <div className="container px-4 sm:px-6 max-w-7xl mx-auto">
+            <div className="text-center mb-6 sm:mb-8 md:mb-12">
+              <h2 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold tracking-tight mb-2 sm:mb-3">
                 Our Mission & Vision
               </h2>
-              <p className="text-muted-foreground max-w-2xl mx-auto text-sm sm:text-base leading-relaxed">
+              <p className="text-muted-foreground max-w-2xl mx-auto text-sm sm:text-base leading-relaxed px-4">
                 Driving innovation in structural engineering while maintaining our commitment to excellence and
                 sustainability.
               </p>
             </div>
-            <div className="grid gap-6 sm:gap-8 grid-cols-1 md:grid-cols-3">
-              <Card className="border-0 shadow-sm hover:shadow-md transition-shadow duration-200">
-                <CardContent className="pt-4 sm:pt-6 px-4 sm:px-6">
-                  <Lightbulb className="h-6 w-6 sm:h-8 sm:w-8 text-primary mb-3 sm:mb-4" />
-                  <h3 className="font-semibold mb-2 sm:mb-3 text-base sm:text-lg">Innovation</h3>
-                  <p className="text-muted-foreground text-xs sm:text-sm leading-relaxed">
-                    To create innovative structural solutions that enhance the way people live, work, and interact with
-                    their environment through superior engineering and design.
-                  </p>
-                </CardContent>
-              </Card>
-              <Card className="border-0 shadow-sm hover:shadow-md transition-shadow duration-200">
-                <CardContent className="pt-4 sm:pt-6 px-4 sm:px-6">
-                  <Building className="h-6 w-6 sm:h-8 sm:w-8 text-primary mb-3 sm:mb-4" />
-                  <h3 className="font-semibold mb-2 sm:mb-3 text-base sm:text-lg">Sustainability</h3>
-                  <p className="text-muted-foreground text-xs sm:text-sm leading-relaxed">
-                    To promote sustainable construction practices that minimize environmental impact while maximizing
-                    structural integrity, functionality, and cost-effectiveness.
-                  </p>
-                </CardContent>
-              </Card>
-              <Card className="border-0 shadow-sm hover:shadow-md transition-shadow duration-200">
-                <CardContent className="pt-4 sm:pt-6 px-4 sm:px-6">
-                  <Users className="h-6 w-6 sm:h-8 sm:w-8 text-primary mb-3 sm:mb-4" />
-                  <h3 className="font-semibold mb-2 sm:mb-3 text-base sm:text-lg">Collaboration</h3>
-                  <p className="text-muted-foreground text-xs sm:text-sm leading-relaxed">
-                    To collaborate with our clients in bringing their structural visions to life through creative and
-                    practical engineering solutions that stand the test of time.
-                  </p>
-                </CardContent>
-              </Card>
+            <div>
+              <h2 className="text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl font-bold tracking-tight text-center px-4">
+                STRENGTH IN EVERY STRUCTURE. TRUST IN EVERY DETAIL
+              </h2>
             </div>
           </div>
         </section>
 
         {/* Team Section */}
-        <section className="py-8 sm:py-12 md:py-16 lg:py-24 bg-gradient-to-br from-gray-50 to-white">
-          <div className="container mx-auto px-4 sm:px-6">
-            <div className="text-center mb-8 sm:mb-12 md:mb-16">
-              <div className="inline-flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 bg-red-100 rounded-full mb-4 sm:mb-6">
-                <Users className="h-6 w-6 sm:h-8 sm:w-8 text-red-600" />
+        <section className="py-6 sm:py-8 md:py-12 lg:py-16 bg-gradient-to-br from-gray-50 to-white">
+          <div className="container mx-auto px-4 sm:px-6 max-w-7xl">
+            <div className="text-center mb-6 sm:mb-8 md:mb-12">
+              <div className="inline-flex items-center justify-center w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16 bg-red-100 rounded-full mb-3 sm:mb-4 md:mb-6">
+                <Users className="h-5 w-5 sm:h-6 sm:w-6 md:h-8 md:w-8 text-red-600" />
               </div>
-              <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-gray-900 mb-3 sm:mb-4">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-gray-900 mb-2 sm:mb-3">
                 Meet Our <span className="text-red-600">Leadership</span>
               </h2>
-              <p className="text-base sm:text-lg lg:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed px-4">
+              <p className="text-sm sm:text-base lg:text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed px-4">
                 Our experienced professionals bring together decades of expertise in structural engineering and
                 construction, leading innovation in every project we undertake.
               </p>
-              <div className="w-16 sm:w-24 h-1 bg-red-600 mx-auto mt-4 sm:mt-6"></div>
+              <div className="w-12 sm:w-16 md:w-24 h-1 bg-red-600 mx-auto mt-3 sm:mt-4 md:mt-6"></div>
             </div>
 
             {error && (
-              <div className="bg-red-50 border border-red-200 rounded-xl p-4 sm:p-6 mb-8 sm:mb-12 text-center max-w-2xl mx-auto">
+              <div className="bg-red-50 border border-red-200 rounded-lg p-4 sm:p-6 mb-6 sm:mb-8 text-center max-w-2xl mx-auto">
                 <p className="text-red-700 font-medium text-sm sm:text-base">{error}</p>
               </div>
             )}
 
             {loading ? (
-              <div className="space-y-8 sm:space-y-12">
-                {[1, 2, 3].map((i) => (
-                  <div key={i} className="max-w-6xl mx-auto">
-                    <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
-                      <div className="p-6 sm:p-8 md:p-12">
-                        <TeamMemberSkeleton />
+              <div className="space-y-6 sm:space-y-8 md:space-y-12">
+                {/* CEO Profile Skeleton */}
+                <div className="max-w-6xl mx-auto">
+                  <div className="bg-white rounded-lg sm:rounded-xl shadow-lg overflow-hidden border border-red-100">
+                    <div className="p-4 sm:p-6 md:p-8 lg:p-12">
+                      <div className="space-y-6 lg:space-y-0 lg:grid lg:grid-cols-12 lg:gap-8 lg:items-center">
+                        <div className="lg:col-span-4 space-y-4">
+                          <Skeleton className="h-8 w-3/4" />
+                          <Skeleton className="h-4 w-full" />
+                          <Skeleton className="h-4 w-2/3" />
+                        </div>
+                        <div className="hidden lg:block lg:col-span-0">
+                          <Skeleton className="w-px h-48 mx-auto" />
+                        </div>
+                        <div className="lg:col-span-3 space-y-4">
+                          <Skeleton className="h-6 w-1/2" />
+                          <div className="space-y-3">
+                            <Skeleton className="h-4 w-full" />
+                            <Skeleton className="h-4 w-full" />
+                            <Skeleton className="h-4 w-full" />
+                          </div>
+                        </div>
+                        <div className="hidden lg:block lg:col-span-0">
+                          <Skeleton className="w-px h-48 mx-auto" />
+                        </div>
+                        <div className="lg:col-span-3 text-center">
+                          <Skeleton className="w-64 h-80 sm:w-56 sm:h-60 mx-auto rounded-lg" />
+                          <div className="mt-4 space-y-2">
+                            <Skeleton className="h-6 w-3/4 mx-auto" />
+                            <Skeleton className="h-4 w-full mx-auto" />
+                            <Skeleton className="h-4 w-2/3 mx-auto" />
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
-                ))}
+                </div>
+
+                {/* Team Members Skeleton */}
+                <div className="space-y-6 sm:space-y-8">
+                  <div className="text-center">
+                    <Skeleton className="h-8 w-48 mx-auto mb-2" />
+                    <Skeleton className="h-4 w-64 mx-auto" />
+                    <Skeleton className="w-12 sm:w-16 h-1 mx-auto mt-3 sm:mt-4" />
+                  </div>
+                  <TeamMemberSkeleton />
+                </div>
               </div>
             ) : (
-              <div className="space-y-8 sm:space-y-12">
-                {teamMembers.map((member, index) => {
-                  const isEven = index % 2 === 0
+              <div className="space-y-6 sm:space-y-8 md:space-y-12">
+                {/* CEO Profile - Mobile-First Layout */}
+                <div className="max-w-6xl mx-auto">
+                  <div className="bg-white rounded-lg sm:rounded-xl shadow-lg overflow-hidden border border-red-100">
+                    <div className="p-4 sm:p-6 md:p-8 lg:p-12">
+                      {/* Mobile: Single Column, Desktop: Three Columns */}
+                      <div className="space-y-6 lg:space-y-0 lg:grid lg:grid-cols-12 lg:gap-8 lg:items-center">
+                        {/* Company Description */}
+                        <div className="lg:col-span-4 space-y-4 sm:space-y-6 text-center lg:text-left">
+                          <div>
+                            <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800 mb-3 sm:mb-4 lg:mb-6 leading-tight">
+                              Your Structure, Our Excellence.
+                            </h2>
+                            <p className="text-gray-600 leading-relaxed text-sm sm:text-base">
+                              We specialize in the design of residential, commercial and industrial structures,
+                              earth-retaining structures, bridge design and repair, and rehabilitation works, etc. We
+                              are one of the recognized companies in Tamil Nadu.
+                            </p>
+                          </div>
+                        </div>
 
-                  return (
-                    <div key={member.name} className="max-w-6xl mx-auto">
-                      <div className="bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100">
-                        <div className="p-6 sm:p-8 md:p-12">
-                          <div
-                            className={`flex flex-col lg:flex-row ${
-                              isEven ? "" : "lg:flex-row-reverse"
-                            } items-center gap-8 sm:gap-10 md:gap-12`}
-                          >
-                            {/* Profile Image */}
-                            <div className="relative group flex-shrink-0">
-                              <div className="w-64 h-64 sm:w-72 sm:h-72 md:w-80 md:h-80 relative overflow-hidden rounded-2xl shadow-lg">
-                                <Image
-                                  src={member.profile_image || "/placeholder.svg?height=320&width=320"}
-                                  alt={member.name}
-                                  width={320}
-                                  height={320}
-                                  className="object-cover w-full h-full group-hover:scale-105 transition-transform duration-300"
-                                />
-                                <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                        {/* Vertical Divider - Hidden on mobile */}
+                        <div className="hidden lg:block lg:col-span-0">
+                          <div className="w-px h-48 bg-gradient-to-b from-transparent via-red-200 to-transparent mx-auto"></div>
+                        </div>
+
+                        {/* Specializations */}
+                        <div className="lg:col-span-3 space-y-4 sm:space-y-6 lg:px-4">
+                          <div>
+                            <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-800 mb-4 sm:mb-6 lg:mb-8 text-center lg:text-left">
+                              Our Specialization:
+                            </h3>
+
+                            <div className="space-y-4 sm:space-y-6 lg:space-y-8">
+                              <div className="flex items-center gap-3 sm:gap-4 justify-center lg:justify-start">
+                                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                  <Building className="h-5 w-5 sm:h-6 sm:w-6 text-red-600" />
+                                </div>
+                                <div>
+                                  <h4 className="font-bold text-gray-800 text-xs sm:text-sm tracking-wider">
+                                    STRUCTURAL DESIGN
+                                  </h4>
+                                </div>
                               </div>
-                              <div className="absolute -bottom-4 -right-4 w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 bg-red-600 rounded-full opacity-10 -z-10" />
+
+                              <div className="flex items-center gap-3 sm:gap-4 justify-center lg:justify-start">
+                                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                  <Users className="h-5 w-5 sm:h-6 sm:w-6 text-red-600" />
+                                </div>
+                                <div>
+                                  <h4 className="font-bold text-gray-800 text-xs sm:text-sm tracking-wider">
+                                    CONSTRUCTION WORK
+                                  </h4>
+                                </div>
+                              </div>
+
+                              <div className="flex items-center gap-3 sm:gap-4 justify-center lg:justify-start">
+                                <div className="w-10 h-10 sm:w-12 sm:h-12 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                  <Award className="h-5 w-5 sm:h-6 sm:w-6 text-red-600" />
+                                </div>
+                                <div>
+                                  <h4 className="font-bold text-gray-800 text-xs sm:text-sm tracking-wider">
+                                    VALUATION FOR BANKS
+                                  </h4>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Vertical Divider - Hidden on mobile */}
+                        <div className="hidden lg:block lg:col-span-0">
+                          <div className="w-px h-48 bg-gradient-to-b from-transparent via-red-200 to-transparent mx-auto"></div>
+                        </div>
+
+                        {/* CEO Profile */}
+                        <div className="lg:col-span-3 text-center">
+                          <div className="relative inline-block">
+                            <div className="w-64 h-80 sm:w-56 sm:h-60 relative overflow-hidden rounded-lg shadow-lg mx-auto border-2 border-red-100 bg-gray-50">
+                              <Image
+                                src={ceoData.profile_image || "/placeholder.svg?height=400&width=300"}
+                                alt={ceoData.name}
+                                fill
+                                className="object-contain p-2"
+                                sizes="(max-width: 640px) 224px, 256px"
+                              />
                             </div>
 
-                            {/* Content */}
-                            <div className="flex-1 space-y-4 sm:space-y-6 text-center lg:text-left">
-                              {/* Header */}
-                              <div className="space-y-2 sm:space-y-3">
-                                <h3 className="text-2xl sm:text-3xl font-bold text-gray-900 leading-tight">
-                                  {member.name}
-                                </h3>
-                                <p className="text-lg sm:text-xl font-semibold text-red-600 leading-relaxed">
-                                  {member.designation}
-                                </p>
-                              </div>
-
-                              {/* Specializations */}
-                              {member.specialization && (
-                                <div className="flex flex-wrap gap-2 sm:gap-3 justify-center lg:justify-start">
-                                  {member.specialization.map((spec) => (
-                                    <Badge
-                                      key={spec}
-                                      className="bg-gray-100 text-gray-700 hover:bg-gray-200 px-3 sm:px-4 py-1 sm:py-2 text-xs sm:text-sm font-medium border-0"
-                                    >
-                                      {spec}
-                                    </Badge>
-                                  ))}
-                                </div>
-                              )}
-
-                              {/* Bio */}
-                              <div className="prose prose-gray max-w-none">
-                                <p className="text-gray-600 leading-relaxed text-sm sm:text-base lg:text-lg whitespace-pre-line">
-                                  {member.name === "Er. Prabhu Dev"
-                                    ? member.bio?.split("\n\nProfessional Recognitions")[0] + "..."
-                                    : member.bio || member.email}
-                                </p>
-                              </div>
-
-                              {/* Read More Button for CEO */}
-                              {member.name === "Er. Prabhu Dev" && (
-                                <div className="pt-2">
-                                  <Button
-                                    asChild
-                                    variant="outline"
-                                    className="border-red-600 text-red-600 hover:bg-red-600 hover:text-white w-full sm:w-auto"
-                                  >
-                                    <Link
-                                      href="/about/er-prabhu-dev"
-                                      className="inline-flex items-center justify-center"
-                                    >
-                                      Read Full Profile <ArrowRight className="ml-2 h-4 w-4" />
-                                    </Link>
-                                  </Button>
-                                </div>
-                              )}
-
-                              {/* Contact Information */}
-                              <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 pt-4 border-t border-gray-100 justify-center lg:justify-start">
-                                {member.email && (
-                                  <div className="flex items-center gap-3 group justify-center lg:justify-start">
-                                    <div className="w-8 h-8 sm:w-10 sm:h-10 bg-red-50 rounded-full flex items-center justify-center group-hover:bg-red-100 transition-colors">
-                                      <Mail className="h-4 w-4 sm:h-5 sm:w-5 text-red-600" />
-                                    </div>
-                                    <div className="text-center lg:text-left">
-                                      <p className="text-xs sm:text-sm font-medium text-gray-900">Email</p>
-                                      <p className="text-xs sm:text-sm text-gray-600 break-all">{member.email}</p>
-                                    </div>
-                                  </div>
-                                )}
-                                {member.phone && (
-                                  <div className="flex items-center gap-3 group justify-center lg:justify-start">
-                                    <div className="w-8 h-8 sm:w-10 sm:h-10 bg-red-50 rounded-full flex items-center justify-center group-hover:bg-red-100 transition-colors">
-                                      <Phone className="h-4 w-4 sm:h-5 sm:w-5 text-red-600" />
-                                    </div>
-                                    <div className="text-center lg:text-left">
-                                      <p className="text-xs sm:text-sm font-medium text-gray-900">Phone</p>
-                                      <p className="text-xs sm:text-sm text-gray-600">{member.phone}</p>
-                                    </div>
-                                  </div>
-                                )}
-                              </div>
+                            <div className="mt-4 sm:mt-6 space-y-1 sm:space-y-2">
+                              <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-800">
+                                {ceoData.name.replace("Er. ", "").toUpperCase()}
+                              </h3>
+                              <p className="text-xs sm:text-sm text-gray-400 leading-relaxed px-2">
+                                M.E.(STRUCTURE), Ph.D., CHARTERED STRUCTURAL ENGINEER, GRADE-1 LICENSED STRUCTURAL
+                                ENGINEER (CMDA)
+                              </p>
+                              <p className="text-sm sm:text-base md:text-lg font-bold text-red-400 tracking-wider mt-2 sm:mt-4">
+                                PRINCIPAL STRUCTURAL ENGINEER & CEO
+                              </p>
                             </div>
                           </div>
                         </div>
                       </div>
                     </div>
-                  )
-                })}
+                  </div>
+                </div>
+
+                {/* Other Team Members */}
+                <div className="space-y-6 sm:space-y-8">
+                  {/* Section Title */}
+                  <div className="text-center">
+                    <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 mb-2">Our Team</h3>
+                    <p className="text-gray-600 text-sm sm:text-base">Meet the professionals behind our success</p>
+                    <div className="w-12 sm:w-16 h-1 bg-red-600 mx-auto mt-3 sm:mt-4"></div>
+                  </div>
+
+                  {/* Team Grid Layout - 4 members per row */}
+                  <div className="max-w-7xl mx-auto">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 md:gap-8 px-4">
+                      {teamMembers.slice(1).map((member, index) => (
+                        <div key={member.name} className="group text-center">
+                          <div className="space-y-4 sm:space-y-5">
+                            {/* Square Profile Image */}
+                            <div className="relative mx-auto">
+                              <div className="w-40 h-40 sm:w-44 sm:h-44 md:w-48 md:h-48 lg:w-52 lg:h-52 relative overflow-hidden rounded-lg bg-gray-100 shadow-lg group-hover:shadow-xl transition-all duration-300 border-2 border-gray-200 mx-auto">
+                                <Image
+                                  src={member.profile_image || "/placeholder.svg?height=224&width=224"}
+                                  alt={member.name}
+                                  fill
+                                  className="object-cover object-center transition-all duration-300 group-hover:scale-105"
+                                  sizes="(max-width: 640px) 160px, (max-width: 768px) 176px, (max-width: 1024px) 192px, 208px"
+                                />
+                              </div>
+                            </div>
+
+                            {/* Member Info */}
+                            <div className="space-y-2 px-2">
+                              <h3 className="text-base sm:text-lg font-bold text-gray-900 leading-tight min-h-[1.5rem]">
+                                {member.name}
+                              </h3>
+                              {member.email && (
+                                <p className="text-xs sm:text-sm text-gray-500 leading-relaxed truncate">
+                                  {member.email}
+                                </p>
+                              )}
+                              <p className="text-sm sm:text-base text-gray-600 font-medium leading-relaxed min-h-[2.5rem] flex items-center justify-center">
+                                {member.designation}
+                              </p>
+                            </div>
+
+                            {/* Specialization Tags - Minimal */}
+                            {member.specialization && member.specialization.length > 0 && (
+                              <div className="flex flex-wrap gap-2 justify-center px-2">
+                                <Badge className="bg-red-50 text-red-700 hover:bg-red-100 px-3 py-1 text-xs font-medium border-0 rounded-full">
+                                  {member.specialization[0]}
+                                </Badge>
+                                {member.specialization.length > 1 && (
+                                  <Badge className="bg-gray-100 text-gray-600 px-3 py-1 text-xs font-medium border-0 rounded-full">
+                                    +{member.specialization.length - 1}
+                                  </Badge>
+                                )}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
               </div>
             )}
           </div>

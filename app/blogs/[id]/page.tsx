@@ -1,12 +1,13 @@
 "use client"
 import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
-import { ArrowLeft, Calendar, Clock, Share2, User, Tag } from "lucide-react"
+import { ArrowLeft, Calendar, Clock, Share2, User, Tag, Check, X } from "lucide-react"
 import { supabase } from "@/lib/supabase"
 import { formatTimeAgo } from "@/lib/utils"
 import Image from "next/image"
 import Link from "next/link"
 import { useParams } from "next/navigation"
+import { toast } from "sonner"
 
 type Blog = {
   id: string
@@ -59,10 +60,73 @@ function ArticleSkeleton() {
   )
 }
 
+function ImageModal({
+  isOpen,
+  onClose,
+  imageSrc,
+  imageAlt,
+}: {
+  isOpen: boolean
+  onClose: () => void
+  imageSrc: string
+  imageAlt: string
+}) {
+  useEffect(() => {
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose()
+      }
+    }
+
+    if (isOpen) {
+      document.addEventListener("keydown", handleEscape)
+      document.body.style.overflow = "hidden"
+    }
+
+    return () => {
+      document.removeEventListener("keydown", handleEscape)
+      document.body.style.overflow = "unset"
+    }
+  }, [isOpen, onClose])
+
+  if (!isOpen) return null
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm" onClick={onClose}>
+      <div className="relative max-w-7xl max-h-[90vh] w-full h-full flex items-center justify-center p-4">
+        <button
+          onClick={onClose}
+          className="absolute top-4 right-4 z-10 bg-white/10 hover:bg-white/20 text-white rounded-full p-2 transition-colors"
+          aria-label="Close image"
+        >
+          <X className="w-6 h-6" />
+        </button>
+
+        <div className="relative w-full h-full flex items-center justify-center">
+          <Image
+            src={imageSrc || "/placeholder.svg"}
+            alt={imageAlt}
+            fill
+            className="object-contain"
+            sizes="100vw"
+            quality={100}
+          />
+        </div>
+
+        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 bg-black/50 text-white px-4 py-2 rounded-lg text-sm">
+          Click anywhere or press ESC to close
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function BlogDetailPage() {
   const params = useParams()
   const [blog, setBlog] = useState<Blog | null>(null)
   const [loading, setLoading] = useState(true)
+  const [copied, setCopied] = useState(false)
+  const [showImageModal, setShowImageModal] = useState(false)
 
   useEffect(() => {
     const fetchBlogDetail = async () => {
@@ -91,6 +155,73 @@ export default function BlogDetailPage() {
 
     fetchBlogDetail()
   }, [params.id])
+
+  const handleShare = async () => {
+    const url = window.location.href
+    const title = blog?.title || "Check out this blog post"
+    const text = blog?.excerpt || "Interesting article from Arrow Structures"
+
+    // Check if Web Share API is supported
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: title,
+          text: text,
+          url: url,
+        })
+        toast.success("Article shared successfully!")
+      } catch (error) {
+        if ((error as Error).name !== "AbortError") {
+          console.error("Error sharing:", error)
+          // Fallback to copy URL
+          copyToClipboard(url)
+        }
+      }
+    } else {
+      // Fallback: Copy URL to clipboard
+      copyToClipboard(url)
+    }
+  }
+
+  const copyToClipboard = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text)
+      setCopied(true)
+      toast.success("Article URL copied to clipboard!")
+      setTimeout(() => setCopied(false), 2000)
+    } catch (error) {
+      console.error("Failed to copy:", error)
+      toast.error("Failed to copy URL")
+    }
+  }
+
+  const shareToSocial = (platform: string) => {
+    const url = encodeURIComponent(window.location.href)
+    const title = encodeURIComponent(blog?.title || "")
+    const text = encodeURIComponent(blog?.excerpt || "")
+
+    let shareUrl = ""
+
+    switch (platform) {
+      case "twitter":
+        shareUrl = `https://twitter.com/intent/tweet?text=${title}&url=${url}`
+        break
+      case "facebook":
+        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`
+        break
+      case "linkedin":
+        shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${url}`
+        break
+      case "whatsapp":
+        shareUrl = `https://wa.me/?text=${title}%20${url}`
+        break
+      default:
+        return
+    }
+
+    window.open(shareUrl, "_blank", "width=600,height=400")
+    toast.success(`Shared to ${platform.charAt(0).toUpperCase() + platform.slice(1)}!`)
+  }
 
   if (loading) {
     return <ArticleSkeleton />
@@ -143,31 +274,57 @@ export default function BlogDetailPage() {
               <User className="w-4 h-4" />
               <span className="font-medium">Arrow Structures</span>
             </div>
-            <div className="flex items-center space-x-2">
-              <Calendar className="w-4 h-4" />
-              <span>
-                {new Date(blog.created_at).toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
-              </span>
-            </div>
-            <div className="flex items-center space-x-2">
-              <Clock className="w-4 h-4" />
-              <span>{formatTimeAgo(new Date(blog.created_at))}</span>
-            </div>
+          
+          
           </div>
 
-          <div className="flex items-center space-x-4 mb-8">
+          {/* Share Buttons */}
+          <div className="flex flex-wrap items-center gap-3 mb-8">
             <Button
+              onClick={handleShare}
               variant="outline"
               size="sm"
               className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
             >
-              <Share2 className="w-4 h-4 mr-2" />
-              Share Article
+              {copied ? <Check className="w-4 h-4 mr-2" /> : <Share2 className="w-4 h-4 mr-2" />}
+              {copied ? "Copied!" : "Share Article"}
             </Button>
+
+            {/* Social Media Share Buttons */}
+            <div className="flex gap-2">
+              <Button
+                onClick={() => shareToSocial("twitter")}
+                variant="outline"
+                size="sm"
+                className="border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-white"
+              >
+                Twitter
+              </Button>
+              <Button
+                onClick={() => shareToSocial("facebook")}
+                variant="outline"
+                size="sm"
+                className="border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white"
+              >
+                Facebook
+              </Button>
+              <Button
+                onClick={() => shareToSocial("linkedin")}
+                variant="outline"
+                size="sm"
+                className="border-blue-700 text-blue-700 hover:bg-blue-700 hover:text-white"
+              >
+                LinkedIn
+              </Button>
+              <Button
+                onClick={() => shareToSocial("whatsapp")}
+                variant="outline"
+                size="sm"
+                className="border-green-500 text-green-500 hover:bg-green-500 hover:text-white"
+              >
+                WhatsApp
+              </Button>
+            </div>
           </div>
         </div>
       </section>
@@ -176,15 +333,23 @@ export default function BlogDetailPage() {
       {blog.image && (
         <section className="mb-12">
           <div className="container max-w-4xl mx-auto px-4">
-            <div className="relative aspect-[16/9] rounded-2xl overflow-hidden shadow-2xl">
+            <div
+              className="relative aspect-[16/9] rounded-2xl overflow-hidden shadow-2xl cursor-pointer group transition-transform hover:scale-[1.02]"
+              onClick={() => setShowImageModal(true)}
+            >
               <Image
                 src={blog.image || "/placeholder.svg"}
                 alt={blog.title}
                 fill
-                className="object-cover"
+                className="object-cover transition-transform group-hover:scale-105"
                 priority
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 80vw, 1000px"
               />
+              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center">
+                <div className="bg-white/90 text-gray-800 px-4 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity">
+                  Click to view full size
+                </div>
+              </div>
             </div>
           </div>
         </section>
@@ -209,6 +374,12 @@ export default function BlogDetailPage() {
           </div>
         </div>
       </section>
+      <ImageModal
+        isOpen={showImageModal}
+        onClose={() => setShowImageModal(false)}
+        imageSrc={blog.image || "/placeholder.svg"}
+        imageAlt={blog.title}
+      />
     </div>
   )
 }

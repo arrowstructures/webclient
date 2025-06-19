@@ -11,6 +11,7 @@ import { Card, CardContent } from "@/components/ui/card"
 import { Mail, MapPin, Phone, Send, Clock, CheckCircle } from "lucide-react"
 import { StructuralBackground } from "@/components/structural-background"
 import { useState } from "react"
+import { toast } from "sonner"
 
 const formSchema = z.object({
   name: z.string().min(2, "Name must be at least 2 characters"),
@@ -36,24 +37,36 @@ export default function ContactPage() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true)
 
-    await new Promise((resolve) => setTimeout(resolve, 1000))
+    try {
+      console.log("Submitting form with values:", values)
 
-    const subject = encodeURIComponent("Customer Query from Contact Form")
-    const body = encodeURIComponent(
-      `Dear Arrow Structures Team,\n\n` +
-        `You have received a new inquiry:\n\n` +
-        `Name: ${values.name}\n` +
-        `Email: ${values.email}\n` +
-        `Phone: ${values.phone}\n\n` +
-        `Message:\n${values.message}\n\n` +
-        `Regards,\nArrow Structures Contact Form`,
-    )
+      const response = await fetch("/api/send-email", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(values),
+      })
 
-    window.location.href = `mailto:arrowstructures@gmail.com?subject=${subject}&body=${body}`
+      console.log("Response status:", response.status)
 
-    setIsSubmitting(false)
-    setIsSubmitted(true)
-    form.reset()
+      const responseData = await response.json()
+      console.log("Response data:", responseData)
+
+      if (response.ok) {
+        setIsSubmitted(true)
+        form.reset()
+        toast.success("Message sent successfully! We'll get back to you soon.")
+      } else {
+        console.error("Server error:", responseData)
+        toast.error(responseData.error || "Failed to send message. Please try again.")
+      }
+    } catch (error) {
+      console.error("Network error sending email:", error)
+      toast.error("Network error. Please check your connection and try again.")
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   const contactInfo = [
@@ -61,25 +74,21 @@ export default function ContactPage() {
       icon: MapPin,
       title: "Visit Our Office",
       content: "5, Guru Govind Singh Road, R.S Puram, Coimbatore – 641002, Tamil Nadu, India",
-      action: "Get Directions",
     },
     {
       icon: Phone,
       title: "Call Us",
       content: "+91 88705 94827",
-      action: "Call Now",
     },
     {
       icon: Mail,
       title: "Email Us",
       content: "contact@arrowstructures.com",
-      action: "Send Email",
     },
     {
       icon: Clock,
       title: "Business Hours",
       content: "Monday - Friday: 9:00 AM - 6:00 PM\nSaturday: 9:00 AM - 2:00 PM",
-      action: "View Schedule",
     },
   ]
 
@@ -133,13 +142,6 @@ export default function ContactPage() {
                     <p className="text-xs sm:text-sm text-muted-foreground mb-3 sm:mb-4 whitespace-pre-line leading-relaxed">
                       {info.content}
                     </p>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="text-red-500 hover:text-red-600 hover:bg-red-500/10 text-xs sm:text-sm"
-                    >
-                      {info.action}
-                    </Button>
                   </CardContent>
                 </Card>
               ))}

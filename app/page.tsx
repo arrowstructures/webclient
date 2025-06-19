@@ -215,7 +215,7 @@ export default function HomePage() {
                         href="mailto:contact@arrowstructures.com"
                         className="text-sm sm:text-base text-red-600 hover:text-red-700 transition-colors"
                       >
-                        contact@arrowstructures.com
+                        info@arrowstructures.com
                       </Link>
                     </div>
                   </div>

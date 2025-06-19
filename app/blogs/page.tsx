@@ -1,3 +1,4 @@
+
 "use client"
 
 import { useState, useEffect } from "react"
@@ -5,8 +6,9 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { ArrowRight, ChevronLeft, ChevronRight, Calendar, Clock, Search, Star } from "lucide-react"
+import { ArrowRight, ChevronLeft, ChevronRight, Calendar, Clock, Search, Star, User } from "lucide-react"
 import { supabase } from "@/lib/supabase"
+// Ensure this import path is correct for your formatTimeAgo function
 import { formatTimeAgo } from "@/lib/utils"
 import Image from "next/image"
 import Link from "next/link"
@@ -23,7 +25,7 @@ type Blog = {
   tag: string
   featured_post: boolean
   publish_immediately: boolean
-  created_at: string
+  created_at: string // This will be a string from Supabase
 }
 
 type BlogClient = {
@@ -36,7 +38,7 @@ type BlogClient = {
   tag: string
   featuredPost: boolean
   publishImmediately: boolean
-  createdAt: Date
+  createdAt: Date // This will be a Date object after conversion
 }
 
 // Helper function to convert snake_case to camelCase
@@ -51,7 +53,7 @@ const snakeToCamel = (blog: Blog): BlogClient => {
     tag: blog.tag,
     featuredPost: blog.featured_post,
     publishImmediately: blog.publish_immediately,
-    createdAt: new Date(blog.created_at),
+    createdAt: new Date(blog.created_at), // Correctly converts string to Date object
   }
 }
 
@@ -74,51 +76,56 @@ export default function BlogsPage() {
   const [featuredBlogs, setFeaturedBlogs] = useState<BlogClient[]>([])
   const [currentSlide, setCurrentSlide] = useState(0)
   const [loading, setLoading] = useState(true)
-  const [displayCount, setDisplayCount] = useState(9)
+  const [loadingMore, setLoadingMore] = useState(false) // This state is not currently used but good to keep if implementing infinite scroll
+  const [displayCount, setDisplayCount] = useState(12)
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("all")
   const [categories, setCategories] = useState<{ id: string; name: string }[]>([])
 
-  useEffect(() => {
-    const fetchBlogs = async () => {
-      setLoading(true)
-      try {
-        // Fetch all blogs that should be published
-        const { data, error } = await supabase
-          .from("blogs")
-          .select("*")
-          .eq("publish_immediately", true)
-          .order("created_at", { ascending: false })
-          .limit(50)
+  // Simple fetch function - load all blogs at once
+  const fetchBlogs = async () => {
+    setLoading(true)
+    try {
+      console.log("Fetching blogs from database...")
 
-        if (error) {
-          console.error("Error fetching blogs:", error)
-        } else {
-          // Convert snake_case to camelCase
-          const formattedData = data.map(snakeToCamel)
+      // Fetch all blogs that should be published
+      const { data, error } = await supabase
+        .from("blogs")
+        .select("*")
+        .eq("publish_immediately", true)
+        .order("created_at", { ascending: false })
 
-          // Set featured blogs (those marked as featured_post)
-          const featured = formattedData.filter((blog) => blog.featuredPost).slice(0, 4)
-          setFeaturedBlogs(featured)
+      if (error) {
+        console.error("Error fetching blogs:", error)
+      } else {
+        console.log("Fetched blogs data:", data)
 
-          // Set all blogs
-          setAllBlogs(formattedData || [])
+        // Convert snake_case to camelCase and Date objects
+        const formattedData = data.map(snakeToCamel)
 
-          // Extract unique categories
-          const uniqueCategories = [...new Set(formattedData.map((blog) => blog.category))]
-          const categoryOptions = [
-            { id: "all", name: "All Blogs" },
-            ...uniqueCategories.map((cat) => ({ id: cat, name: cat })),
-          ]
-          setCategories(categoryOptions)
-        }
-      } catch (error) {
-        console.error("Unexpected error:", error)
-      } finally {
-        setLoading(false)
+        // Set featured blogs (those marked as featured_post)
+        const featured = formattedData.filter((blog) => blog.featuredPost).slice(0, 4)
+        setFeaturedBlogs(featured)
+
+        // Set all blogs
+        setAllBlogs(formattedData || [])
+
+        // Extract unique categories
+        const uniqueCategories = [...new Set(formattedData.map((blog) => blog.category))]
+        const categoryOptions = [
+          { id: "all", name: "All Articles" },
+          ...uniqueCategories.map((cat) => ({ id: cat, name: cat })),
+        ]
+        setCategories(categoryOptions)
       }
+    } catch (error) {
+      console.error("Unexpected error:", error)
+    } finally {
+      setLoading(false)
     }
+  }
 
+  useEffect(() => {
     fetchBlogs()
   }, [])
 
@@ -127,7 +134,7 @@ export default function BlogsPage() {
     if (featuredBlogs.length > 1) {
       const timer = setInterval(() => {
         setCurrentSlide((prev) => (prev + 1) % featuredBlogs.length)
-      }, 6000)
+      }, 5000)
       return () => clearInterval(timer)
     }
   }, [featuredBlogs.length])
@@ -141,7 +148,7 @@ export default function BlogsPage() {
   }
 
   const loadMore = () => {
-    setDisplayCount((prev) => prev + 9)
+    setDisplayCount((prev) => prev + 12)
   }
 
   // Filter blogs based on search and category
@@ -149,6 +156,7 @@ export default function BlogsPage() {
     const matchesSearch =
       blog.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       blog.excerpt.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      // Assuming content can be large, consider if full content search is needed
       blog.content.toLowerCase().includes(searchTerm.toLowerCase()) ||
       blog.tag.toLowerCase().includes(searchTerm.toLowerCase())
     const matchesCategory = selectedCategory === "all" || blog.category === selectedCategory
@@ -159,16 +167,17 @@ export default function BlogsPage() {
     <div className="min-h-screen bg-white relative">
       <StructuralBackground />
       <div className="relative z-10">
-        {/* Title Section */}
+        {/* Title Section - Newsroom Style */}
         <section className="py-8 sm:py-12 bg-gray-50">
           <div className="container max-w-7xl mx-auto px-4 sm:px-6">
             <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:gap-6">
               <div className="text-center md:text-left">
                 <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 leading-tight mb-2">
-                  Engineering <span className="text-red-500">Insights</span>
+                  Engineering <span className="text-red-500">Newsroom</span>
                 </h1>
                 <p className="text-gray-600 text-sm sm:text-base lg:text-lg leading-relaxed">
-                  Expert perspectives and technical knowledge from our engineering team.
+                  Stay updated with the latest insights, developments, and technical breakthroughs from our engineering
+                  team.
                 </p>
                 <div className="w-16 sm:w-20 h-1 bg-red-500 mt-4 mx-auto md:mx-0"></div>
               </div>
@@ -177,12 +186,17 @@ export default function BlogsPage() {
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                   <Input
                     type="text"
-                    placeholder="Search blogs..."
+                    placeholder="Search articles..."
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     className="pl-10 pr-4 py-2 h-10 sm:h-12 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
                   />
                 </div>
+                {searchTerm && (
+                  <p className="text-xs sm:text-sm text-gray-600 mt-2 text-center">
+                    Showing {filteredBlogs.length} of {allBlogs.length} articles
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -210,12 +224,15 @@ export default function BlogsPage() {
           </div>
         </section>
 
-        {/* Featured Blog Slider */}
+        {/* Featured Articles Slider */}
         {featuredBlogs.length > 0 && (
           <section className="py-6 sm:py-8">
             <div className="container max-w-7xl mx-auto px-4 sm:px-6">
               <div className="mb-4 sm:mb-6">
-                <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">Featured Blogs</h2>
+                <div className="flex items-center gap-2 mb-2">
+                  <Star className="h-5 w-5 text-red-500 fill-current" />
+                  <h2 className="text-xl sm:text-2xl font-bold text-gray-900">Featured Articles</h2>
+                </div>
                 <div className="w-12 sm:w-16 h-1 bg-red-500"></div>
               </div>
 
@@ -244,10 +261,9 @@ export default function BlogsPage() {
                             <div className="container max-w-7xl mx-auto px-4 sm:px-6">
                               <div className="max-w-xl sm:max-w-2xl text-white">
                                 <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-3 sm:mb-4">
-                                  <span className="bg-red-500 text-white px-2 sm:px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide flex items-center">
-                                    <Star className="w-2 sm:w-3 h-2 sm:h-3 mr-1" />
+                                  <Badge className="bg-red-500 hover:bg-red-600 text-white px-2 sm:px-3 py-1 text-xs font-bold uppercase tracking-wide">
                                     FEATURED
-                                  </span>
+                                  </Badge>
                                   <Badge variant="outline" className="border-white/30 text-white text-xs">
                                     {blog.category}
                                   </Badge>
@@ -260,7 +276,7 @@ export default function BlogsPage() {
                                   {blog.excerpt || blog.content?.substring(0, 150) + "..." || "No content available"}
                                 </p>
                                 <Button className="bg-red-500 hover:bg-red-600 text-white font-semibold text-xs sm:text-sm">
-                                  READ BLOG
+                                  READ FULL STORY
                                   <ArrowRight className="ml-2 h-3 w-3 sm:h-4 sm:w-4" />
                                 </Button>
                               </div>
@@ -310,20 +326,20 @@ export default function BlogsPage() {
           </section>
         )}
 
-        {/* All Blogs Grid */}
+        {/* All Articles Grid */}
         <section className="py-8 sm:py-12 md:py-16 bg-gray-50">
           <div className="container max-w-7xl mx-auto px-4 sm:px-6">
             <div className="mb-8 sm:mb-12">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-2">Latest Blogs</h2>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 mb-2">ALL ARTICLES</h2>
               <div className="w-16 sm:w-20 h-1 bg-red-500 mb-4"></div>
               <p className="text-gray-600 text-sm sm:text-base">
-                {filteredBlogs.length} blog{filteredBlogs.length !== 1 ? "s" : ""} available
+                {filteredBlogs.length} article{filteredBlogs.length !== 1 ? "s" : ""} available
               </p>
             </div>
 
             {loading ? (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-                {[...Array(9)].map((_, i) => (
+                {[...Array(12)].map((_, i) => (
                   <BlogCardSkeleton key={i} />
                 ))}
               </div>
@@ -332,7 +348,7 @@ export default function BlogsPage() {
                 <div className="w-16 h-16 sm:w-20 sm:h-20 md:w-24 md:h-24 bg-gray-200 rounded-full flex items-center justify-center mx-auto mb-4 sm:mb-6">
                   <Search className="w-8 h-8 sm:w-10 sm:h-10 md:w-12 md:h-12 text-gray-400" />
                 </div>
-                <h3 className="text-xl sm:text-2xl font-bold text-gray-600 mb-2">No blogs found</h3>
+                <h3 className="text-xl sm:text-2xl font-bold text-gray-600 mb-2">No articles found</h3>
                 <p className="text-gray-500 text-sm sm:text-base mb-4">Try adjusting your search or filter criteria</p>
                 {searchTerm && (
                   <Button onClick={() => setSearchTerm("")} variant="outline">
@@ -363,7 +379,7 @@ export default function BlogsPage() {
                                 <span>{formatTimeAgo(blog.createdAt)}</span>
                                 <span>•</span>
                                 <Clock className="w-3 h-3" />
-                                <span>5 min read</span>
+                                <span>5 min read</span> {/* This is a placeholder, you might want to calculate this dynamically */}
                               </div>
                               <h3 className="font-bold text-sm sm:text-lg leading-tight mb-2 line-clamp-2">
                                 {blog.title}
@@ -371,13 +387,15 @@ export default function BlogsPage() {
                             </div>
                           </div>
                           <div className="absolute top-3 sm:top-4 right-3 sm:right-4 flex space-x-2">
-                            <Badge className="bg-red-500 text-white text-xs font-bold">{blog.category}</Badge>
                             {blog.featuredPost && (
-                              <Badge className="bg-yellow-500 text-white text-xs font-bold flex items-center">
-                                <Star className="w-2 h-2 mr-1" />
-                                Featured
+                              <Badge className="bg-red-500 text-white px-2 py-1 text-xs font-bold">
+                                <Star className="w-3 h-3 mr-1 fill-current" />
+                                FEATURED
                               </Badge>
                             )}
+                            <Badge className="bg-blue-500 text-white px-2 py-1 text-xs font-bold">
+                              {blog.category.toUpperCase()}
+                            </Badge>
                           </div>
                         </div>
                         <CardContent className="p-4 sm:p-6 bg-white flex-1">
@@ -385,10 +403,9 @@ export default function BlogsPage() {
                             {blog.excerpt || blog.content?.substring(0, 150) + "..." || "No content available"}
                           </p>
                           <div className="flex items-center justify-between">
-                            <div className="flex items-center space-x-2 text-xs text-gray-500">
-                              <Badge variant="outline" className="text-xs">
-                                {blog.tag}
-                              </Badge>
+                            <div className="flex items-center gap-2 text-xs text-gray-500">
+                              <User className="w-3 h-3" />
+                              <span className="font-medium">ENGINEERING TEAM</span>
                             </div>
                             <Button
                               size="sm"
@@ -412,8 +429,15 @@ export default function BlogsPage() {
                       variant="outline"
                       className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white px-6 sm:px-8"
                     >
-                      Load More Blogs
+                      Load More Articles ({filteredBlogs.length - displayCount} remaining)
                     </Button>
+                  </div>
+                )}
+
+                {/* End of articles indicator */}
+                {displayCount >= filteredBlogs.length && filteredBlogs.length > 12 && (
+                  <div className="text-center mt-8 sm:mt-12">
+                    <p className="text-gray-500 text-sm">You've reached the end of our articles</p>
                   </div>
                 )}
               </>

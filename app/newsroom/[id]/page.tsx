@@ -14,7 +14,10 @@ type News = {
   headline: string
   summary: string
   content: string
-  created_at: string
+  image: string
+  featured_news: boolean
+  publish_immediately: boolean
+  updated_at: string
 }
 
 // Loading skeleton component
@@ -89,8 +92,9 @@ export default function NewsDetailPage() {
         // Fetch main article first for faster initial render
         const { data: newsData, error: newsError } = await supabase
           .from("news")
-          .select("*")
+          .select("id, headline, summary, content, image, featured_news, publish_immediately, updated_at")
           .eq("id", params.id)
+          .eq("publish_immediately", true)
           .single()
 
         if (newsError) {
@@ -104,9 +108,10 @@ export default function NewsDetailPage() {
         // Fetch related news separately to avoid blocking main content
         const { data: relatedData, error: relatedError } = await supabase
           .from("news")
-          .select("id, headline, summary, created_at")
+          .select("id, headline, summary, image, featured_news")
           .neq("id", params.id)
-          .order("created_at", { ascending: false })
+          .eq("publish_immediately", true)
+          .order("updated_at", { ascending: false })
           .limit(6)
 
         if (relatedError) {
@@ -294,7 +299,7 @@ export default function NewsDetailPage() {
         <div className="container max-w-4xl mx-auto px-4">
           <div className="relative aspect-[16/9] rounded-2xl overflow-hidden shadow-2xl">
             <Image
-              src="/placeholder.svg?height=600&width=1000"
+              src={news.image || "/placeholder.svg?height=600&width=1000"}
               alt={news.headline}
               fill
               className="object-cover"
@@ -343,7 +348,7 @@ export default function NewsDetailPage() {
                     <Card className="group cursor-pointer hover:shadow-2xl transition-all duration-300 border-0 overflow-hidden h-full">
                       <div className="relative aspect-[16/10] overflow-hidden">
                         <Image
-                          src="/placeholder.svg?height=300&width=500"
+                          src={relatedItem.image || "/placeholder.svg?height=300&width=500"}
                           alt={relatedItem.headline}
                           fill
                           className="object-cover group-hover:scale-110 transition-transform duration-500"
@@ -358,7 +363,12 @@ export default function NewsDetailPage() {
                             </h3>
                           </div>
                         </div>
-                        <div className="absolute top-4 right-4">
+                        <div className="absolute top-4 right-4 flex gap-2">
+                          {relatedItem.featured_news && (
+                            <span className="bg-yellow-500 text-white px-2 py-1 rounded text-xs font-bold">
+                              FEATURED
+                            </span>
+                          )}
                           <span className="bg-red-500 text-white px-2 py-1 rounded text-xs font-bold">NEWS</span>
                         </div>
                       </div>

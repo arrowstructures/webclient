@@ -122,7 +122,7 @@ export default function AboutPage() {
               </div>
               <div className="relative h-[250px] sm:h-[300px] md:h-[400px] lg:h-[500px] w-full overflow-hidden rounded-lg sm:rounded-xl shadow-xl order-1 lg:order-2">
                 <Image
-                  src="/image4.png"
+                  src="/image4.jpg"
                   alt="Arrow Structures Office"
                   fill
                   className="object-cover"

@@ -228,14 +228,11 @@ export default function NewsroomPage() {
                                     </Badge>
                                   )}
                                 </div>
-                                <h2 className="text-lg sm:text-1xl md:text-2xl font-regular leading-tight mb-2 sm:mb-4 line-clamp-2">
+                                <P className="text-lg sm:text-1xl md:text-2xl font-regular leading-tight mb-2 sm:mb-4 line-clamp-2">
                                   {news.headline}
-                                </h2>
+                                </P>
                             
-                                <Button className="bg-red-500 hover:bg-red-600 text-white font-semibold text-xs sm:text-sm">
-                                  READ FULL STORY
-                                  <ArrowRight className="ml-2 h-3 w-3 sm:h-4 sm:w-4" />
-                                </Button>
+                              
                               </div>
                             </div>
                           </div>

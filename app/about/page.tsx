@@ -187,7 +187,7 @@ export default function AboutPage() {
               <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-gray-900 mb-2 sm:mb-3">
                 Meet Our <span className="text-red-600">Leadership</span>
               </h2>
-              <p className="text-sm sm:text-base lg:text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed px-4">
+              <p className="text-sm sm:text-base lg:text-lg text-gray-600 max-w-3xl mx-auto leading-relaxed px-4  ">
                 Our experienced professionals bring together decades of expertise in structural engineering and
                 construction, leading innovation in every project we undertake.
               </p>
@@ -263,7 +263,7 @@ export default function AboutPage() {
                             <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800 mb-3 sm:mb-4 lg:mb-6 leading-tight">
                               Your Structure, Our Excellence.
                             </h2>
-                            <p className="text-gray-600 leading-relaxed text-sm sm:text-base">
+                            <p className="text-gray-600 leading-relaxed text-sm sm:text-base text-justify"">
                               We specialize in the design of residential, commercial and industrial structures,
                               earth-retaining structures, bridge design and repair, and rehabilitation works, etc. We
                               are one of the recognized companies in Tamil Nadu.
@@ -340,12 +340,12 @@ export default function AboutPage() {
 
                             <div className="mt-4 sm:mt-6 space-y-1 sm:space-y-2">
                               <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-800">
-                                {ceoData.name.replace("Er. ", "").toUpperCase()}
+                                Er. Prabhu Dev
                               </h3>
-                              <p className="text-xs sm:text-sm text-gray-400 leading-relaxed px-2">
-                                M.E.(STRUCTURE), Ph.D., CHARTERED STRUCTURAL ENGINEER, GRADE-1 LICENSED STRUCTURAL
-                                ENGINEER (CMDA)
-                              </p>
+                            <p className="text-xs sm:text-sm text-gray-400 leading-relaxed px-2">
+  M.E.(STRUCTURE), <span className="overline">Ph.D.</span>, CHARTERED STRUCTURAL ENGINEER, GRADE-1 LICENSED STRUCTURAL
+  ENGINEER (CMDA)
+</p>
                               <p className="text-sm sm:text-base md:text-lg font-bold text-red-400 tracking-wider mt-2 sm:mt-4">
                                 PRINCIPAL STRUCTURAL ENGINEER & CEO
                               </p>

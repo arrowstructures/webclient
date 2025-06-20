@@ -112,13 +112,13 @@ export default function AboutPage() {
                   </h1>
                   <div className="mt-2 sm:mt-3 h-1 w-8 sm:w-12 bg-primary rounded-full"></div>
                 </div>
-           <p className="text-sm sm:text-base lg:text-lg text-muted-foreground leading-relaxed text-justify">
-  Established in 2017, Arrow Structures has emerged as a trusted name in the field of Structural
-  Consultancy and Civil Construction, recognized for its technical expertise, quality-driven approach,
-  and unwavering commitment to client satisfaction. What began as a focused structural engineering
-  practice has grown into one of the region's most respected firms, delivering excellence across a wide
-  spectrum of residential, commercial, and infrastructure projects.
-</p>
+                <p className="text-sm sm:text-base lg:text-lg text-muted-foreground leading-relaxed text-justify">
+                  Established in 2017, Arrow Structures has emerged as a trusted name in the field of Structural
+                  Consultancy and Civil Construction, recognized for its technical expertise, quality-driven approach,
+                  and unwavering commitment to client satisfaction. What began as a focused structural engineering
+                  practice has grown into one of the region's most respected firms, delivering excellence across a wide
+                  spectrum of residential, commercial, and infrastructure projects.
+                </p>
               </div>
               <div className="relative h-[250px] sm:h-[300px] md:h-[400px] lg:h-[500px] w-full overflow-hidden rounded-lg sm:rounded-xl shadow-xl order-1 lg:order-2">
                 <Image
@@ -263,7 +263,7 @@ export default function AboutPage() {
                             <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800 mb-3 sm:mb-4 lg:mb-6 leading-tight">
                               Your Structure, Our Excellence.
                             </h2>
-                            <p className="text-gray-600 leading-relaxed text-sm sm:text-base text-justify"">
+                            <p className="text-gray-600 leading-relaxed text-sm sm:text-base text-justify">
                               We specialize in the design of residential, commercial and industrial structures,
                               earth-retaining structures, bridge design and repair, and rehabilitation works, etc. We
                               are one of the recognized companies in Tamil Nadu.
@@ -339,13 +339,11 @@ export default function AboutPage() {
                             </div>
 
                             <div className="mt-4 sm:mt-6 space-y-1 sm:space-y-2">
-                              <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-800">
-                                Er. Prabhu Dev
-                              </h3>
-                            <p className="text-xs sm:text-sm text-gray-400 leading-relaxed px-2">
-  M.E.(STRUCTURE), <span className="overline">Ph.D.</span>, CHARTERED STRUCTURAL ENGINEER, GRADE-1 LICENSED STRUCTURAL
-  ENGINEER (CMDA)
-</p>
+                              <h3 className="text-lg sm:text-xl md:text-2xl font-bold text-gray-800">Er. Prabhu Dev</h3>
+                              <p className="text-xs sm:text-sm text-gray-400 leading-relaxed px-2">
+                                M.E.(STRUCTURE), <span style={{ textDecoration: "overline" }}>Ph.D.</span>, CHARTERED
+                                STRUCTURAL ENGINEER, GRADE-1 LICENSED STRUCTURAL ENGINEER (CMDA)
+                              </p>
                               <p className="text-sm sm:text-base md:text-lg font-bold text-red-400 tracking-wider mt-2 sm:mt-4">
                                 PRINCIPAL STRUCTURAL ENGINEER & CEO
                               </p>

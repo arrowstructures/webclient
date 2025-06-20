@@ -20,6 +20,10 @@ type News = {
   updated_at: string
 }
 
+type Props = {
+  params: { id: string }
+}
+
 // Loading skeleton component
 function ArticleSkeleton() {
   return (
@@ -76,7 +80,8 @@ function RelatedNewsSkeleton() {
   )
 }
 
-export default function NewsDetailPage() {
+// Main News Detail Component
+export default function NewsDetailClient() {
   const params = useParams()
   const [news, setNews] = useState<News | null>(null)
   const [relatedNews, setRelatedNews] = useState<News[]>([])
@@ -170,24 +175,26 @@ export default function NewsDetailPage() {
   }
 
   const shareToSocial = (platform: string) => {
-    const url = encodeURIComponent(window.location.href)
-    const title = encodeURIComponent(news?.headline || "")
-    const text = encodeURIComponent(news?.summary || "")
+    const url = window.location.href
+    const title = news?.headline || ""
+    const summary = news?.summary || ""
 
     let shareUrl = ""
 
     switch (platform) {
       case "twitter":
-        shareUrl = `https://twitter.com/intent/tweet?text=${title}&url=${url}`
+        shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(url)}`
         break
       case "facebook":
-        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`
+        shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`
         break
       case "linkedin":
-        shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${url}`
+        shareUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`
         break
       case "whatsapp":
-        shareUrl = `https://wa.me/?text=${title}%20${url}`
+        // WhatsApp will automatically generate rich preview from Open Graph tags
+        // We just need to share the URL, WhatsApp handles the rest
+        shareUrl = `https://wa.me/?text=${encodeURIComponent(url)}`
         break
       default:
         return

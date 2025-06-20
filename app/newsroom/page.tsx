@@ -332,15 +332,7 @@ export default function NewsroomPage() {
                           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
                           <div className="absolute bottom-3 sm:bottom-4 left-3 sm:left-4 right-3 sm:right-4">
                             <div className="text-white">
-                              <div className="flex items-center gap-2 text-xs mb-2 opacity-90">
-                                <Calendar className="w-3 h-3" />
-                              
-                                {news.updated_at !== news.created_at && (
-                                  <Badge variant="secondary" className="text-xs px-1 py-0">
-                                    Updated
-                                  </Badge>
-                                )}
-                              </div>
+                       
                               <h3 className="font-bold text-sm sm:text-lg leading-tight mb-2 line-clamp-2">
                                 {news.headline}
                               </h3>

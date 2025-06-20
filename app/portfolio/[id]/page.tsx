@@ -162,10 +162,7 @@ export default async function ProjectDetails({ params }: { params: { id: string 
               <ArrowLeft className="mr-2 h-4 w-4" />
               Back to Portfolio
             </Link>
-            <Badge className={statusConfig.className}>
-              <StatusIcon className="w-4 h-4 mr-2" />
-              {statusConfig.label}
-            </Badge>
+           
           </div>
 
           <div className="grid lg:grid-cols-2 gap-12 items-center">

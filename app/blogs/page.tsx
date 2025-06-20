@@ -376,9 +376,7 @@ export default function BlogsPage() {
                             <div className="text-white">
                               <div className="flex items-center space-x-2 text-xs mb-2 opacity-90">
                                 <Calendar className="w-3 h-3" />
-                                <span>{formatTimeAgo(blog.createdAt)}</span>
-                                <span>•</span>
-                                <Clock className="w-3 h-3" />
+                           
                                 <span>5 min read</span> {/* This is a placeholder, you might want to calculate this dynamically */}
                               </div>
                               <h3 className="font-bold text-sm sm:text-lg leading-tight mb-2 line-clamp-2">

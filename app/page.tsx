@@ -131,7 +131,7 @@ export default function HomePage() {
               {/* Image */}
               <div className="relative aspect-[4/3] overflow-hidden rounded-lg shadow-lg order-2 lg:order-1">
                 <img
-                  src="/placeholder.svg?height=400&width=600"
+                  src="/image3.png?height=400&width=600"
                   alt="Arrow Structures team and office"
                   className="object-cover w-full h-full"
                 />

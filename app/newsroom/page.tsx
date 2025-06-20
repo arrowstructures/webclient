@@ -221,9 +221,7 @@ export default function NewsroomPage() {
                                   <Badge className="bg-red-500 hover:bg-red-600 text-white px-2 sm:px-3 py-1 text-xs font-bold uppercase tracking-wide">
                                     FEATURED
                                   </Badge>
-                                  <span className="text-xs sm:text-sm opacity-90">
-                                    {formatTimeAgo(new Date(news.created_at))}
-                                  </span>
+                               
                                   {news.updated_at !== news.created_at && (
                                     <Badge variant="outline" className="text-white border-white/50 text-xs">
                                       Updated
@@ -339,7 +337,7 @@ export default function NewsroomPage() {
                             <div className="text-white">
                               <div className="flex items-center gap-2 text-xs mb-2 opacity-90">
                                 <Calendar className="w-3 h-3" />
-                                <span>{formatTimeAgo(new Date(news.created_at))}</span>
+                              
                                 {news.updated_at !== news.created_at && (
                                   <Badge variant="secondary" className="text-xs px-1 py-0">
                                     Updated

@@ -228,9 +228,9 @@ export default function NewsroomPage() {
                                     </Badge>
                                   )}
                                 </div>
-                                <P className="text-lg sm:text-1xl md:text-2xl font-regular leading-tight mb-2 sm:mb-4 line-clamp-2">
+                                <p className="text-lg sm:text-1xl md:text-2xl font-regular leading-tight mb-2 sm:mb-4 line-clamp-2">
                                   {news.headline}
-                                </P>
+                                </p>
                             
                               
                               </div>

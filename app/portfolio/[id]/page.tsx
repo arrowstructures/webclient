@@ -183,10 +183,7 @@ export default async function ProjectDetails({ params }: { params: { id: string 
                   <MapPin className="w-5 h-5 mr-3 text-red-500" />
                   <span>{project.location}</span>
                 </div>
-                <div className="flex items-center text-gray-600">
-                  <Calendar className="w-5 h-5 mr-3 text-red-500" />
-                  <span>Started {formatDate(project.created_at)}</span>
-                </div>
+           
                 <div className="flex items-center text-gray-600">
                   <Building2 className="w-5 h-5 mr-3 text-red-500" />
                   <span>Client: {project.client}</span>

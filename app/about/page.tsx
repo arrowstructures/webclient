@@ -112,13 +112,13 @@ export default function AboutPage() {
                   </h1>
                   <div className="mt-2 sm:mt-3 h-1 w-8 sm:w-12 bg-primary rounded-full"></div>
                 </div>
-                <p className="text-sm sm:text-base lg:text-lg text-muted-foreground leading-relaxed">
-                  Established in 2017, Arrow Structures has emerged as a trusted name in the field of Structural
-                  Consultancy and Civil Construction, recognized for its technical expertise, quality-driven approach,
-                  and unwavering commitment to client satisfaction. What began as a focused structural engineering
-                  practice has grown into one of the region's most respected firms, delivering excellence across a wide
-                  spectrum of residential, commercial, and infrastructure projects.
-                </p>
+           <p className="text-sm sm:text-base lg:text-lg text-muted-foreground leading-relaxed text-justify">
+  Established in 2017, Arrow Structures has emerged as a trusted name in the field of Structural
+  Consultancy and Civil Construction, recognized for its technical expertise, quality-driven approach,
+  and unwavering commitment to client satisfaction. What began as a focused structural engineering
+  practice has grown into one of the region's most respected firms, delivering excellence across a wide
+  spectrum of residential, commercial, and infrastructure projects.
+</p>
               </div>
               <div className="relative h-[250px] sm:h-[300px] md:h-[400px] lg:h-[500px] w-full overflow-hidden rounded-lg sm:rounded-xl shadow-xl order-1 lg:order-2">
                 <Image
